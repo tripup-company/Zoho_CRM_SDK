@@ -19,8 +19,7 @@
     },
     "autoload": {
         "psr-4": {
-            "": "src"
-        },
-        "files": ["src/index.php"]
+            "Zoho\\": "src"
+        }
     }
 }

@@ -6,7 +6,7 @@ use Zoho\Oauth\Client\ZohoOAuth;
 
 class ZCRMConfigUtil
 {
-    private static $configProperties=array();
+    private static $configProperties = [];
     
     public static function getInstance()
     {
@@ -14,26 +14,14 @@ class ZCRMConfigUtil
     }
     public static function initialize($initializeOAuth)
     {
-        $path=realpath(dirname(__FILE__)."/../../../resources/configuration.properties");
-        $fileHandler=fopen($path, "r");
-        if (!$fileHandler) {
-            return;
-        }
-        self::$configProperties=CommonUtil::getFileContentAsMap($fileHandler);
-        
+        $path=realpath(dirname(__FILE__)."/../../Config/zoho.php");
+        self::$configProperties = array_merge(require $path, self::$configProperties);
+
         if ($initializeOAuth) {
             ZohoOAuth::initializeWithOutInputStream();
         }
     }
-    
-    public static function loadConfigProperties($fileHandler)
-    {
-        $configMap=CommonUtil::getFileContentAsMap($fileHandler);
-        foreach ($configMap as $key=>$value) {
-            self::$configProperties[$key]=$value;
-        }
-    }
-    
+        
     public static function getConfigValue($key)
     {
         return isset(self::$configProperties[$key])?self::$configProperties[$key]:'';
