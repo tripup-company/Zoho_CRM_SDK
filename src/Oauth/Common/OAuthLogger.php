@@ -1,5 +1,5 @@
 <?php
-namespace Zoho\Oauth\Common;
+namespace Zoho\OAuth\Common;
 
 class OAuthLogger
 {

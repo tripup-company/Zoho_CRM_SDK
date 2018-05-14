@@ -1,9 +1,9 @@
 <?php
-namespace Zoho\Oauth\ClientApp;
+namespace Zoho\OAuth\ClientApp;
 
-use Zoho\Oauth\Client\ZohoOAuthPersistenceInterface;
-use Zoho\Oauth\Common\ZohoOAuthException;
-use Zoho\Oauth\Common\OAuthLogger;
+use Zoho\OAuth\Client\ZohoOAuthPersistenceInterface;
+use Zoho\OAuth\Common\ZohoOAuthException;
+use Zoho\OAuth\Common\OAuthLogger;
 
 class ZohoOAuthPersistenceHandler implements ZohoOAuthPersistenceInterface
 {

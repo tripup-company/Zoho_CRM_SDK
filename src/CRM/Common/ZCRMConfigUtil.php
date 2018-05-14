@@ -2,7 +2,7 @@
 namespace Zoho\CRM\Common;
 
 use Zoho\CRM\Common\CommonUtil;
-use Zoho\Oauth\Client\ZohoOAuth;
+use Zoho\OAuth\Client\ZohoOAuth;
 
 class ZCRMConfigUtil
 {

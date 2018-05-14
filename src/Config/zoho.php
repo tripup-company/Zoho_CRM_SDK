@@ -2,13 +2,25 @@
 //check if we are running from laravel if so let's pull configurations from laravel env
 if (function_exists('env') && class_exists("Illuminate\Foundation\Application")) {
     return [
-        'sandbox'                   => env('ZOHO_SANDBOX', false),
-        'authorize_url'             => env('ZOHO_AUTHORIZE_URL', false),
+        "apiBaseUrl"                => env('ZOHO_API_BASE_URL', 2),
+        "apiVersion"                => env('ZOHO_API_VERSION', 2),
         'client_id'                 => env('ZOHO_CLIENT_ID', false),
         'client_secret'             => env('ZOHO_SECRET', false),
         'redirect_uri'              => env('ZOHO_REDIRECT_URI', false),
+        "accounts_url"              => env('ZOHO_ACCOUNTS_URL', "https://accounts.zoho.com"),
+        "currentUserEmail"          => env('ZOHO_USER_EMAIL', false),
+        "token_persistence_type"    => env('ZOHO_TOKEN_PERSISTENCE_TYPE', "file"),
+        "token_persistence_path"    => env('ZOHO_TOKEN_PERSISTENCE_PATH', realpath(dirname(__FILE__).'/../Tokens/')),
+        "persistence_handler_class" => env('ZOHO_PERSISTENCE_HANDLER_CLASS', "Zoho\OAuth\ClientApp\ZohoOAuthPersistenceHandler"),
+        "access_type"               => env('ZOHO_REDIRECT_URI', "offline"),
+        'sandbox'                   => env('ZOHO_SANDBOX', false),
+        "applicationLogFilePath"    => env('ZOHO_LOG_PATH', realpath(dirname(__FILE__).'/../Logs/')),
+
+
+        //still refactoring
         'access_token_url'          => env('ZOHO_ACCESS_TOKEN_URL', false),
         'refresh_token_url'         => env('ZOHO_REFRESH_TOKEN_URL', false),
+        'authorize_url'             => env('ZOHO_AUTHORIZE_URL', false),
         'token_path'                => env('ZOHO_TOKEN_PERSISTENCE_PATH', false),
         'authorization'             => env('ZOHO_AUTH', false),
         'self_code'                 => env('ZOHO_SELF_CODE', false),

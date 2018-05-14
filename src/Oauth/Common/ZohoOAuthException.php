@@ -1,5 +1,7 @@
 <?php
-namespace Zoho\Oauth\Common;
+namespace Zoho\OAuth\Common;
+
+use Exception;
 
 class ZohoOAuthException extends Exception
 {

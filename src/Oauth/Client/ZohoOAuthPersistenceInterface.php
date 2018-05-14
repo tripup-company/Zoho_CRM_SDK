@@ -1,5 +1,5 @@
 <?php
-namespace Zoho\Oauth\Client;
+namespace Zoho\OAuth\Client;
 
 interface ZohoOAuthPersistenceInterface
 {

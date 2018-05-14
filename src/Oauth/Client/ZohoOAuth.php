@@ -1,14 +1,13 @@
 <?php
-namespace Zoho\Oauth\Client;
+namespace Zoho\OAuth\Client;
 
-use Zoho\Oauth\Common\ZohoOAuthUtil;
-use Zoho\Oauth\Common\ZohoOAuthConstants;
-use Zoho\Oauth\Common\ZohoOAuthParams;
-use Zoho\Oauth\ClientApp\ZohoOAuthPersistenceHandler;
-use Zoho\Oauth\ClientApp\ZohoOAuthPersistenceByFile;
-use Zoho\Oauth\Common\OAuthLogger;
-
-use Zoho\Oauth\Client\ZohoOAuthClient;
+use Zoho\OAuth\Common\ZohoOAuthConstants;
+use Zoho\OAuth\Common\ZohoOAuthParams;
+use Zoho\OAuth\ClientApp\ZohoOAuthPersistenceHandler;
+use Zoho\OAuth\ClientApp\ZohoOAuthPersistenceByFile;
+use Zoho\OAuth\Common\OAuthLogger;
+use Zoho\OAuth\Common\ZohoOAuthException;
+use Zoho\OAuth\Client\ZohoOAuthClient;
 
 class ZohoOAuth
 {

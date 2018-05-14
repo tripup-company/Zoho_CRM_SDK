@@ -1,7 +1,7 @@
 <?php
-namespace Zoho\Oauth\Common;
+namespace Zoho\OAuth\Common;
 
-use Zoho\Oauth\Common\ZohoOAuthConstants;
+use Zoho\OAuth\Common\ZohoOAuthConstants;
 
 class ZohoOAuthHTTPConnector
 {
