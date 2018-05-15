@@ -5,6 +5,7 @@ use Zoho\CRM\Api\Handler\APIHandler;
 use Zoho\CRM\Crud\ZCRMInventoryLineItem;
 use Zoho\CRM\Crud\ZCRMRecord;
 use Zoho\CRM\Crud\ZCRMTax;
+use Zoho\CRM\Setup\Users\ZCRMUser;
 use Zoho\CRM\Exception\APIExceptionHandler;
 use Zoho\CRM\Common\APIConstants;
 use Zoho\CRM\Api\APIRequest;

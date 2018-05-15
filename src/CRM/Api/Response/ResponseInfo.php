@@ -1,28 +1,29 @@
 <?php
 namespace Zoho\CRM\Api\Response;
 
-use Zoho\CRM\Api\Common\APIConstants;
+use Zoho\CRM\Common\APIConstants;
 
 class ResponseInfo
 {
-	private $moreRecords=null;
-	private $recordCount=null;
-	private $pageNo=null;
-	private $perPage=null;
-	
-	public function __construct($reponseInfoJSON)
-	{
-		$this->moreRecords=(bool)$reponseInfoJSON[APIConstants::MORE_RECORDS];
-		$this->recordCount=$reponseInfoJSON[APIConstants::COUNT]+0;
-		$this->pageNo=$reponseInfoJSON[APIConstants::PAGE]+0;
-		$this->perPage=$reponseInfoJSON[APIConstants::PER_PAGE]+0;
-	}
+    private $moreRecords=null;
+    private $recordCount=null;
+    private $pageNo=null;
+    private $perPage=null;
+    
+    public function __construct($reponseInfoJSON)
+    {
+        $this->moreRecords=(bool)$reponseInfoJSON[APIConstants::MORE_RECORDS];
+        $this->recordCount=$reponseInfoJSON[APIConstants::COUNT]+0;
+        $this->pageNo=$reponseInfoJSON[APIConstants::PAGE]+0;
+        $this->perPage=$reponseInfoJSON[APIConstants::PER_PAGE]+0;
+    }
 
     /**
      * moreRecords
      * @return Boolean
      */
-    public function getMoreRecords(){
+    public function getMoreRecords()
+    {
         return $this->moreRecords;
     }
 
@@ -30,7 +31,8 @@ class ResponseInfo
      * moreRecords
      * @param Boolean $moreRecords
      */
-    public function setMoreRecords($moreRecords){
+    public function setMoreRecords($moreRecords)
+    {
         $this->moreRecords = $moreRecords;
     }
 
@@ -38,7 +40,8 @@ class ResponseInfo
      * recordCount
      * @return int
      */
-    public function getRecordCount(){
+    public function getRecordCount()
+    {
         return $this->recordCount;
     }
 
@@ -46,7 +49,8 @@ class ResponseInfo
      * recordCount
      * @param int $recordCount
      */
-    public function setRecordCount($recordCount){
+    public function setRecordCount($recordCount)
+    {
         $this->recordCount = $recordCount;
     }
 
@@ -54,7 +58,8 @@ class ResponseInfo
      * pageNo
      * @return int
      */
-    public function getPageNo(){
+    public function getPageNo()
+    {
         return $this->pageNo;
     }
 
@@ -62,7 +67,8 @@ class ResponseInfo
      * pageNo
      * @param int $pageNo
      */
-    public function setPageNo($pageNo){
+    public function setPageNo($pageNo)
+    {
         $this->pageNo = $pageNo;
     }
 
@@ -70,7 +76,8 @@ class ResponseInfo
      * perPage
      * @return int
      */
-    public function getPerPage(){
+    public function getPerPage()
+    {
         return $this->perPage;
     }
 
@@ -78,9 +85,8 @@ class ResponseInfo
      * perPage
      * @param int $perPage
      */
-    public function setPerPage($perPage){
+    public function setPerPage($perPage)
+    {
         $this->perPage = $perPage;
     }
-
 }
-?>

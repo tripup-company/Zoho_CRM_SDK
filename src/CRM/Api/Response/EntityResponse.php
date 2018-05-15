@@ -1,45 +1,42 @@
 <?php
 namespace Zoho\CRM\Api\Response;
 
-use Zoho\CRM\Api\Common\APIConstants;
-
+use Zoho\CRM\Common\APIConstants;
 
 class EntityResponse
 {
-	private $status=null;
-	private $message=null;
-	private $code=null;
-	private $responseJSON=null;
-	private $data=null;
-	private $upsertDetails=array();
-	private $details=null;
-	
-	public function __construct($entityResponseJSON)
-	{
-		$this->responseJSON=$entityResponseJSON;
-		$this->status=$entityResponseJSON[APIConstants::STATUS];
-		$this->message=$entityResponseJSON[APIConstants::MESSAGE];
-		$this->code=$entityResponseJSON[APIConstants::CODE];
-		
-		if(array_key_exists(APIConstants::ACTION,$entityResponseJSON))
-		{
-			$this->upsertDetails[APIConstants::ACTION]=$entityResponseJSON[APIConstants::ACTION];
-		}
-		if(array_key_exists(APIConstants::DUPLICATE_FIELD,$entityResponseJSON))
-		{
-			$this->upsertDetails[APIConstants::DUPLICATE_FIELD]=$entityResponseJSON[APIConstants::DUPLICATE_FIELD];
-		}
-		if(array_key_exists("details",$entityResponseJSON))
-		{
-			$this->details=$entityResponseJSON["details"];
-		}
-	}
+    private $status=null;
+    private $message=null;
+    private $code=null;
+    private $responseJSON=null;
+    private $data=null;
+    private $upsertDetails=array();
+    private $details=null;
+    
+    public function __construct($entityResponseJSON)
+    {
+        $this->responseJSON=$entityResponseJSON;
+        $this->status=$entityResponseJSON[APIConstants::STATUS];
+        $this->message=$entityResponseJSON[APIConstants::MESSAGE];
+        $this->code=$entityResponseJSON[APIConstants::CODE];
+        
+        if (array_key_exists(APIConstants::ACTION, $entityResponseJSON)) {
+            $this->upsertDetails[APIConstants::ACTION]=$entityResponseJSON[APIConstants::ACTION];
+        }
+        if (array_key_exists(APIConstants::DUPLICATE_FIELD, $entityResponseJSON)) {
+            $this->upsertDetails[APIConstants::DUPLICATE_FIELD]=$entityResponseJSON[APIConstants::DUPLICATE_FIELD];
+        }
+        if (array_key_exists("details", $entityResponseJSON)) {
+            $this->details=$entityResponseJSON["details"];
+        }
+    }
 
     /**
      * status
      * @return String
      */
-    public function getStatus(){
+    public function getStatus()
+    {
         return $this->status;
     }
 
@@ -47,7 +44,8 @@ class EntityResponse
      * status
      * @param String $status
      */
-    public function setStatus($status){
+    public function setStatus($status)
+    {
         $this->status = $status;
     }
 
@@ -55,7 +53,8 @@ class EntityResponse
      * message
      * @return String
      */
-    public function getMessage(){
+    public function getMessage()
+    {
         return $this->message;
     }
 
@@ -63,7 +62,8 @@ class EntityResponse
      * message
      * @param String $message
      */
-    public function setMessage($message){
+    public function setMessage($message)
+    {
         $this->message = $message;
     }
 
@@ -71,7 +71,8 @@ class EntityResponse
      * code
      * @return String
      */
-    public function getCode(){
+    public function getCode()
+    {
         return $this->code;
     }
 
@@ -79,7 +80,8 @@ class EntityResponse
      * code
      * @param String $code
      */
-    public function setCode($code){
+    public function setCode($code)
+    {
         $this->code = $code;
     }
 
@@ -88,7 +90,8 @@ class EntityResponse
      * responseJson
      * @return JSONObject
      */
-    public function getResponseJSON(){
+    public function getResponseJSON()
+    {
         return $this->responseJSON;
     }
 
@@ -97,7 +100,8 @@ class EntityResponse
      * data
      * @return Entity Data
      */
-    public function getData(){
+    public function getData()
+    {
         return $this->data;
     }
 
@@ -105,7 +109,8 @@ class EntityResponse
      * data
      * @param Entity Data $data
      */
-    public function setData($data){
+    public function setData($data)
+    {
         $this->data = $data;
     }
     /*
@@ -113,18 +118,16 @@ class EntityResponse
      */
     public function getUpsertDetails()
     {
-    	return $this->upsertDetails;
+        return $this->upsertDetails;
     }
     
     public function setDetails($details)
     {
-    	$this->details=$details;
+        $this->details=$details;
     }
     
     public function getDetails()
     {
-    	return $this->details;
+        return $this->details;
     }
-
 }
-?>

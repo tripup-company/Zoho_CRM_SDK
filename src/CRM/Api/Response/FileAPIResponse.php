@@ -1,78 +1,73 @@
 <?php
 namespace Zoho\CRM\Api\Response;
 
-use Zoho\CRM\Api\Common\APIConstants;
+use Zoho\CRM\Common\APIConstants;
 use Zoho\CRM\Exception\ZCRMException;
 
 class FileAPIResponse
 {
-	private $response=null;
-	private $responseJSON=null;
-	private $httpStatusCode=null;
-	private $responseHeaders=null;
-	private $code=null;
-	private $message=null;
-	private $details=null;
-	private $status=null;
-	
-	public function setFileContent($httpResponse,$httpStatusCode)
-	{
-		$this->httpStatusCode=$httpStatusCode;
-		if($httpStatusCode==APIConstants::RESPONSECODE_NO_CONTENT)
-		{
-			$this->responseJSON=array();
-			$this->responseHeaders=array();
-			$exception=new ZCRMException(APIConstants::INVALID_ID_MSG,$httpStatusCode);
-			$exception->setExceptionCode("No Content");
-			throw $exception;
-		}
-		list($headers, $content) = explode("\r\n\r\n",$httpResponse,2);
-		$headerArray=(explode("\r\n",$headers,50));
-		$headerMap=array();
-		foreach ($headerArray as $key)
-		{
-			if(strpos($key,":")!=false)
-			{
-				$splitArray=explode(":",$key);
-				$headerMap[$splitArray[0]]=$splitArray[1];
-			}
-		}
-		if(in_array($httpStatusCode,APIExceptionHandler::getFaultyResponseCodes()))
-		{
-			$content=json_decode($content,true);
-			$this->responseJSON=$content;
-			$exception=new ZCRMException($content['message'],$httpStatusCode);
-			$exception->setExceptionCode($content['code']);
-			$exception->setExceptionDetails($content['details']);
-			throw $exception;
-		}
-		else if($httpStatusCode==APIConstants::RESPONSECODE_OK)
-		{
-			$this->response=$content;
-			$this->responseJSON=array();
-			$this->status=APIConstants::STATUS_SUCCESS;
-		}
-		$this->responseHeaders=$headerMap;
-		return $this;
-	}
-	
-	public function getFileName()
-	{
-		$contentDisp=self::getResponseHeaders()['Content-Disposition'];
-		$fileName=substr($contentDisp,strrpos($contentDisp,"'")+1,strlen($contentDisp));
-		return $fileName;
-	}
-	
-	public function getFileContent()
-	{
-		return $this->response;
-	}
+    private $response=null;
+    private $responseJSON=null;
+    private $httpStatusCode=null;
+    private $responseHeaders=null;
+    private $code=null;
+    private $message=null;
+    private $details=null;
+    private $status=null;
+    
+    public function setFileContent($httpResponse, $httpStatusCode)
+    {
+        $this->httpStatusCode=$httpStatusCode;
+        if ($httpStatusCode==APIConstants::RESPONSECODE_NO_CONTENT) {
+            $this->responseJSON=array();
+            $this->responseHeaders=array();
+            $exception=new ZCRMException(APIConstants::INVALID_ID_MSG, $httpStatusCode);
+            $exception->setExceptionCode("No Content");
+            throw $exception;
+        }
+        list($headers, $content) = explode("\r\n\r\n", $httpResponse, 2);
+        $headerArray=(explode("\r\n", $headers, 50));
+        $headerMap=array();
+        foreach ($headerArray as $key) {
+            if (strpos($key, ":")!=false) {
+                $splitArray=explode(":", $key);
+                $headerMap[$splitArray[0]]=$splitArray[1];
+            }
+        }
+        if (in_array($httpStatusCode, APIExceptionHandler::getFaultyResponseCodes())) {
+            $content=json_decode($content, true);
+            $this->responseJSON=$content;
+            $exception=new ZCRMException($content['message'], $httpStatusCode);
+            $exception->setExceptionCode($content['code']);
+            $exception->setExceptionDetails($content['details']);
+            throw $exception;
+        } elseif ($httpStatusCode==APIConstants::RESPONSECODE_OK) {
+            $this->response=$content;
+            $this->responseJSON=array();
+            $this->status=APIConstants::STATUS_SUCCESS;
+        }
+        $this->responseHeaders=$headerMap;
+        return $this;
+    }
+    
+    public function getFileName()
+    {
+        $contentDisp=self::getResponseHeaders()['Content-Disposition'];
+        $fileName=substr($contentDisp, strrpos($contentDisp, "'")+1, strlen($contentDisp));
+        return $fileName;
+    }
+    
+    public function getFileContent()
+    {
+        return $this->response;
+    }
 
     /**
      * response
      * @return String
      */
-    public function getResponse(){
+    public function getResponse()
+    {
         return $this->response;
     }
 
@@ -80,7 +75,8 @@ class FileAPIResponse
      * response
      * @param String $response
      */
-    public function setResponse($response){
+    public function setResponse($response)
+    {
         $this->response = $response;
     }
 
@@ -88,7 +84,8 @@ class FileAPIResponse
      * responseJSON
      * @return Array
      */
-    public function getResponseJSON(){
+    public function getResponseJSON()
+    {
         return $this->responseJSON;
     }
 
@@ -96,7 +93,8 @@ class FileAPIResponse
      * responseJSON
      * @param Array $responseJSON
      */
-    public function setResponseJSON($responseJSON){
+    public function setResponseJSON($responseJSON)
+    {
         $this->responseJSON = $responseJSON;
     }
 
@@ -104,7 +102,8 @@ class FileAPIResponse
      * httpStatusCode
      * @return String
      */
-    public function getHttpStatusCode(){
+    public function getHttpStatusCode()
+    {
         return $this->httpStatusCode;
     }
 
@@ -112,7 +111,8 @@ class FileAPIResponse
      * httpStatusCode
      * @param String $httpStatusCode
      */
-    public function setHttpStatusCode($httpStatusCode){
+    public function setHttpStatusCode($httpStatusCode)
+    {
         $this->httpStatusCode = $httpStatusCode;
     }
 
@@ -120,7 +120,8 @@ class FileAPIResponse
      * responseHeaders
      * @return Array
      */
-    public function getResponseHeaders(){
+    public function getResponseHeaders()
+    {
         return $this->responseHeaders;
     }
 
@@ -128,7 +129,8 @@ class FileAPIResponse
      * responseHeaders
      * @param Array $responseHeaders
      */
-    public function setResponseHeaders($responseHeaders){
+    public function setResponseHeaders($responseHeaders)
+    {
         $this->responseHeaders = $responseHeaders;
     }
 
@@ -136,7 +138,8 @@ class FileAPIResponse
      * code
      * @return String
      */
-    public function getCode(){
+    public function getCode()
+    {
         return $this->code;
     }
 
@@ -145,7 +148,8 @@ class FileAPIResponse
      * @param String $code
      * @return NewFileAPIResponse
      */
-    public function setCode($code){
+    public function setCode($code)
+    {
         $this->code = $code;
     }
 
@@ -153,7 +157,8 @@ class FileAPIResponse
      * message
      * @return String
      */
-    public function getMessage(){
+    public function getMessage()
+    {
         return $this->message;
     }
 
@@ -161,7 +166,8 @@ class FileAPIResponse
      * message
      * @param String $message
      */
-    public function setMessage($message){
+    public function setMessage($message)
+    {
         $this->message = $message;
     }
 
@@ -169,7 +175,8 @@ class FileAPIResponse
      * details
      * @return Array
      */
-    public function getDetails(){
+    public function getDetails()
+    {
         return $this->details;
     }
 
@@ -178,14 +185,13 @@ class FileAPIResponse
      * @param Array $details
      * @return NewFileAPIResponse
      */
-    public function setDetails($details){
+    public function setDetails($details)
+    {
         $this->details = $details;
     }
     
     public function getStatus()
     {
-    	return $this->status;
+        return $this->status;
     }
-
 }
-?>

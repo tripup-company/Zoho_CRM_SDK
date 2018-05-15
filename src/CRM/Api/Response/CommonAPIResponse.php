@@ -20,9 +20,6 @@ class CommonAPIResponse
         $this->apiName=$apiName;
         $this->response=$response;
         $this->httpStatusCode=$httpStatusCode;
-        !d($response);
-        !d($httpStatusCode);
-        die();
         $this->setResponseJSON();
         $this->processResponse();
     }
