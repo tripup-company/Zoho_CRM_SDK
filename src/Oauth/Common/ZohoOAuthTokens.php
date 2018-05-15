@@ -8,7 +8,7 @@ class ZohoOAuthTokens
     private $refreshToken;
     private $accessToken;
     private $expiryTime;
-    private $userEmailId;
+    private $zuid;
     
     public function getRefreshToken()
     {
@@ -54,17 +54,17 @@ class ZohoOAuthTokens
      * userEmailId
      * @return String
      */
-    public function getUserEmailId()
+    public function getZUID()
     {
-        return $this->userEmailId;
+        return $this->zuid;
     }
 
     /**
-     * userEmailId
-     * @param String $userEmailId
+     * Zoho User Id
+     * @param String $zuid
      */
-    public function setUserEmailId($userEmailId)
+    public function setZUID($zuid)
     {
-        $this->userEmailId = $userEmailId;
+        $this->zuid = $zuid;
     }
 }

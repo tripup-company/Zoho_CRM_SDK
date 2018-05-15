@@ -99,7 +99,26 @@ class ZohoOAuth
     public static function getPersistenceHandlerInstance()
     {
         try {
-            return ZohoOAuth::getConfigValue("token_persistence_path")!=""?new ZohoOAuthPersistenceByFile():new ZohoOAuthPersistenceHandler();
+            $persistenceHandlerClass = ZohoOAuth::getConfigValue("persistence_handler_class");
+            $tpt = ZohoOAuth::getConfigValue("token_persistence_type");
+            //check for persistence_handler_class default to handling from class
+            if ($tpt=="class") {
+                //cheking for class set in config (this allows external handling of persistence tokens)
+                if (class_exists($persistenceHandlerClass)) {
+                    //use defined class
+                    return new $persistenceHandlerClass();
+                } elseif (ZohoOAuth::getConfigValue("token_persistence_path")!="") {
+                    return new ZohoOAuthPersistenceByFile();
+                } else {
+                    throw new ZohoOAuthException("Persistence Handler Class doesn't exist or Persistence Path was not set in the config.");
+                }
+            } elseif ($tpt=="file") {
+                if (ZohoOAuth::getConfigValue("token_persistence_path")!="") {
+                    return new ZohoOAuthPersistenceByFile();
+                } else {
+                    throw new ZohoOAuthException("Token Persistence Path wasn't set or Persistence Path was not found");
+                }
+            }
         } catch (Exception $ex) {
             throw new ZohoOAuthException($ex);
         }

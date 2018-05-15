@@ -23,6 +23,6 @@ class ZohoOAuthException extends Exception
     
     public function __toString()
     {
-        return get_class($this) . " Caused by:'{$this->message}' in {$this->file}({$this->line})\n". "{$this->getTraceAsString()}";
+        return get_class($this) . " Caused by:'{$this->message}' in {$this->file}({$this->line})\n";
     }
 }

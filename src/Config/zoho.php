@@ -9,7 +9,7 @@ if (function_exists('env') && class_exists("Illuminate\Foundation\Application"))
         'redirect_uri'              => env('ZOHO_REDIRECT_URI', false),
         "accounts_url"              => env('ZOHO_ACCOUNTS_URL', "https://accounts.zoho.com"),
         "currentUserEmail"          => env('ZOHO_USER_EMAIL', false),
-        "token_persistence_type"    => env('ZOHO_TOKEN_PERSISTENCE_TYPE', "file"),
+        "token_persistence_type"    => env('ZOHO_TOKEN_PERSISTENCE_TYPE', "class"),
         "token_persistence_path"    => env('ZOHO_TOKEN_PERSISTENCE_PATH', realpath(dirname(__FILE__).'/../Tokens/')),
         "persistence_handler_class" => env('ZOHO_PERSISTENCE_HANDLER_CLASS', "Zoho\OAuth\ClientApp\ZohoOAuthPersistenceHandler"),
         "access_type"               => env('ZOHO_REDIRECT_URI', "offline"),
@@ -21,9 +21,6 @@ if (function_exists('env') && class_exists("Illuminate\Foundation\Application"))
         'access_token_url'          => env('ZOHO_ACCESS_TOKEN_URL', false),
         'refresh_token_url'         => env('ZOHO_REFRESH_TOKEN_URL', false),
         'authorize_url'             => env('ZOHO_AUTHORIZE_URL', false),
-        'token_path'                => env('ZOHO_TOKEN_PERSISTENCE_PATH', false),
-        'authorization'             => env('ZOHO_AUTH', false),
-        'self_code'                 => env('ZOHO_SELF_CODE', false),
         'v1_auth'                   => env('ZOHO_V1_AUTH', false),
         'grant_token'               => env('ZOHO_GRANT_TOKEN', false)
     ];

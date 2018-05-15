@@ -30,7 +30,7 @@ class ZohoOAuthClient
         return self::$zohoOAuthClient;
     }
     
-    public function getAccessToken($userEmailId)
+    public function getAccessToken($zuid)
     {
         $persistence = ZohoOAuth::getPersistenceHandlerInstance();
         $tokens;
@@ -65,9 +65,12 @@ class ZohoOAuthClient
             $responseJSON=self::processResponse($resp);
             if (array_key_exists(ZohoOAuthConstants::ACCESS_TOKEN, $responseJSON)) {
                 $tokens = self::getTokensFromJSON($responseJSON);
-                $tokens->setUserEmailId(self::getUserEmailIdFromIAM($tokens->getAccessToken()));
+                $tokens->setZUID(self::getUserZUIDFromIAM($tokens->getAccessToken()));
+
                 ZohoOAuth::getPersistenceHandlerInstance()->saveOAuthData($tokens);
                 return $tokens;
+            } elseif (array_key_exists("error", $responseJSON)) {
+                throw new ZohoOAuthException("Exception while fetching access token from grant token - ". $responseJSON['error']);
             } else {
                 throw new ZohoOAuthException("Exception while fetching access token from grant token - " .$resp);
             }
@@ -76,11 +79,11 @@ class ZohoOAuthClient
         }
     }
     
-    public function generateAccessTokenFromRefreshToken($refreshToken, $userEmailId)
+    public function generateAccessTokenFromRefreshToken($refreshToken, $ZUID)
     {
-        self::refreshAccessToken($refreshToken, $userEmailId);
+        self::refreshAccessToken($refreshToken, $ZUID);
     }
-    public function refreshAccessToken($refreshToken, $userEmailId)
+    public function refreshAccessToken($refreshToken, $ZUID)
     {
         if ($refreshToken == null) {
             throw new ZohoOAuthException("Refresh token is not provided.");
@@ -94,7 +97,7 @@ class ZohoOAuthClient
             if (array_key_exists(ZohoOAuthConstants::ACCESS_TOKEN, $responseJSON)) {
                 $tokens = self::getTokensFromJSON($responseJSON);
                 $tokens->setRefreshToken($refreshToken);
-                $tokens->setUserEmailId($userEmailId);
+                $tokens->setZUID($ZUID);
                 ZohoOAuth::getPersistenceHandlerInstance()->saveOAuthData($tokens);
                 return $tokens;
             } else {
@@ -150,15 +153,15 @@ class ZohoOAuthClient
         $this->zohoOAuthParams = $zohoOAuthParams;
     }
     
-    public function getUserEmailIdFromIAM($accessToken)
+    public function getUserZUIDFromIAM($accessToken)
     {
         $connector = new ZohoOAuthHTTPConnector();
         $connector->setUrl(ZohoOAuth::getUserInfoURL());
         $connector->addHeadder(ZohoOAuthConstants::AUTHORIZATION, ZohoOAuthConstants::OAUTH_HEADER_PREFIX.$accessToken);
         $apiResponse=$connector->get();
         $jsonResponse=self::processResponse($apiResponse);
-        
-        return $jsonResponse['Email'];
+        d($jsonResponse);
+        return $jsonResponse['ZUID'];
     }
     public function processResponse($apiResponse)
     {

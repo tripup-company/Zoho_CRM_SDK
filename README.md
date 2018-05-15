@@ -1,3 +1,9 @@
+####TODO: 
+ - Proper Multi User Handling (Owners)
+ - ZUID instead of Email
+ - Re write `README.md` more clearly
+
+
 #PHP SDK for Zoho CRM
 ----------------------
 PHP SDK for Zoho CRM APIs provides wrapper for Zoho CRM APIs. Hence invoking a Zoho CRM API from your client application is just a method call.It supports both single user as well as multi user authentication.
@@ -24,8 +30,7 @@ The function ZCRMRestClient::initialize() must be called on startup of app.
 The database name should be "zohooauth".  
 There must be a table "oauthtokens" with the columns "useridentifier"(varchar(100)), "accesstoken"(varchar(100)), "refreshtoken"(varchar(100)), "expirytime"(bigint).  
 
-**If `token_persistence_path` provided in `oauth_configuration.properties` file, then persistence happens in file only. In this case, no need of MySQL**
-please create a empty file with name **zcrm_oauthtokens.txt** in the mentioned `token_persistence_path`
+**If `token_persistence_type` is set to `file` in the provided in `src/Config/zoho.php` configuration file, and a corresponding path is also set (`token_persistence_path`) then persistence will be stored in a file. See [Persistence Handling](#Persistence-Handling) for more details.
 
 Installation of SDK through composer
 ------------------------------------
@@ -56,24 +61,31 @@ Hence, the SDK would be installed and a package named `vendor` would be created 
 
 Configurations
 --------------
-Your OAuth Client details should be given to the SDK as a property file.  
-In SDK, we have placed a configuration file (oauth_configuration.properties).   
+Your OAuth Client details should be given to the SDK as a php config file.  
+In SDK, we have placed a configuration file `zoho.php`  
 Please place the respective values in that file.  
-You can find that file under `vendor/zohocrm/php-sdk/src/resources`.  
+You can find that file under `vendor/zohocrm/php-sdk/src/Config`.  
 
 Please fill only the following keys. Based on your domain(EU,CN) please change the value of `accounts_url`. Default value set as US domain
 
->client_id=  
-client_secret=  
-redirect_uri=  
-accounts_url=https://accounts.zoho.com  
-token_persistence_path=  
+>client_id  
+client_secret  
+redirect_uri  
+accounts_url
+token_persistence_path
 
 Only the keys displayed above are to be filled.  
 `client_id`, `client_secret` and `redirect_uri` are your OAuth client’s configurations that you get after registering your Zoho client.  
 `token_persistence_path` is the path to store the OAuth related tokens in file. If this is set then, no need of `database` for persistence. Persistence happens through `file` only.  
 `access_type` must be set to offline only because online OAuth client is not supported by the SDK as of now.  
-`persistence_handler_class` is the implementation of the ZohoOAuthPersistenceInterface  
+
+#### Persistence Handling
+`persistence_handler_class` allows you to define an external class to manage storing persistent tokens. Define the class along with namespace and ensure the handler class has the following public methods:
+ - saveOAuthData(Array $tokens);
+ - getOAuthTokens(String $userEmailId)
+ - deleteOAuthTokens(String $userEmailId)
+
+ #### Log
 
 Create a file named `ZCRMClientLibrary.log` in your client app machine and mention the absolute path of the created file in `configuration.properties` for the key `applicationLogFilePath`.   
 You can find that file under `vendor/zohocrm/php-sdk/src/resources`. This file is to log the exceptions occurred during the usage of SDK.  
@@ -82,6 +94,8 @@ Please fill only the following key
 
 >applicationLogFilePath=
 
+
+#### Sandbox
 To make API calls to `sandbox account`, please change the value of following key to `true` in `configurations.properties`. By default the value is `false`  
 
 >sandbox=true
