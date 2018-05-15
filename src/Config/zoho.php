@@ -2,8 +2,8 @@
 //check if we are running from laravel if so let's pull configurations from laravel env
 if (function_exists('env') && class_exists("Illuminate\Foundation\Application")) {
     return [
-        "apiBaseUrl"                => env('ZOHO_API_BASE_URL', 2),
-        "apiVersion"                => env('ZOHO_API_VERSION', 2),
+        "apiBaseUrl"                => env('ZOHO_API_BASE_URL', "www.zohoapis.com"),
+        "apiVersion"                => env('ZOHO_API_VERSION', "v2"),
         'client_id'                 => env('ZOHO_CLIENT_ID', false),
         'client_secret'             => env('ZOHO_SECRET', false),
         'redirect_uri'              => env('ZOHO_REDIRECT_URI', false),
@@ -27,7 +27,7 @@ if (function_exists('env') && class_exists("Illuminate\Foundation\Application"))
 } else {
     //well we're not running in laravel so lets store configs here (ugly)
     return [
-        "apiBaseUrl"                => "",
+        "apiBaseUrl"                => "www.zohoapis.com",
         "apiVersion"                => "v2",
         "sandbox"                   => false,
         "applicationLogFilePath"    => "",
