@@ -1,8 +1,8 @@
 <?php
-namespace Zoho\CRM\Api\Common;
+namespace Zoho\CRM\Common;
 
 use Zoho\CRM\Api\Response\APIResponse;
-use Zoho\CRM\Api\Common\APIConstants;
+use Zoho\CRM\Common\APIConstants;
 
 /**
  * Purpose of this class is to trigger API call and fetch the response

@@ -1,5 +1,5 @@
 <?php
-namespace Zoho\CRM\Api\Common;
+namespace Zoho\CRM\Common;
 
 class APIConstants
 {

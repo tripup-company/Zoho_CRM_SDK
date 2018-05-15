@@ -20,7 +20,7 @@ class ZohoOAuthClient
     public static function getInstance($params)
     {
         if (self::$zohoOAuthClient == null) {
-            self::$zohoOAuthClient = new ZohoOAuthClient($params);
+            self::$zohoOAuthClient = new self($params);
         }
         return self::$zohoOAuthClient;
     }
@@ -35,7 +35,7 @@ class ZohoOAuthClient
         $persistence = ZohoOAuth::getPersistenceHandlerInstance();
         $tokens;
         try {
-            $tokens = $persistence->getOAuthTokens($userEmailId);
+            $tokens = $persistence->getOAuthTokens($zuid);
         } catch (ZohoOAuthException $ex) {
             OAuthLogger::severe("Exception while retrieving tokens from persistence - ".$ex);
             throw $ex;
@@ -47,7 +47,7 @@ class ZohoOAuthClient
             return $tokens->getAccessToken();
         } catch (ZohoOAuthException $ex) {
             OAuthLogger::info("Access Token has expired. Hence refreshing.");
-            $tokens = self::refreshAccessToken($tokens->getRefreshToken(), $userEmailId);
+            $tokens = self::refreshAccessToken($tokens->getRefreshToken(), $zuid);
             return $tokens->getAccessToken();
         }
     }
