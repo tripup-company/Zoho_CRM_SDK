@@ -3,8 +3,9 @@ namespace Zoho\CRM\Setup\RestClient;
 
 use Zoho\CRM\Api\Handler\MetaDataAPIHandler;
 use Zoho\CRM\Common\ZCRMConfigUtil;
-use Zoho\CRM\Setup\Metadata\ZCRMOrganization;
+use Zoho\CRM\Setup\MetaData\ZCRMOrganization;
 use Zoho\CRM\Common\APIConstants;
+use Zoho\CRM\Api\Handler\OrganizationAPIHandler;
 
 class ZCRMRestClient
 {

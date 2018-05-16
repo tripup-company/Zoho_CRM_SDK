@@ -10,8 +10,8 @@ use Zoho\CRM\Exception\ZCRMException;
 use Zoho\CRM\Crud\ZCRMPermission;
 use Zoho\CRM\Crud\ZCRMProfileSection;
 use Zoho\CRM\Crud\ZCRMProfileCategory;
-use Zoho\CRM\Api\Common\APIConstants;
-
+use Zoho\CRM\Common\APIConstants;
+use Zoho\CRM\Api\ApiRequest;
 
 /**
  *

@@ -33,7 +33,8 @@ class ZohoHTTPConnector
     public function fireRequest()
     {
         $curl_pointer=curl_init();
-        if (count(self::getRequestParamsMap())>0) {
+        //php 7.2 not playing nice
+        if (@count(self::getRequestParamsMap())>0) {
             $url=self::getUrl()."?".self::getUrlParamsAsString(self::getRequestParamsMap());
             curl_setopt($curl_pointer, CURLOPT_URL, $url);
         } else {
