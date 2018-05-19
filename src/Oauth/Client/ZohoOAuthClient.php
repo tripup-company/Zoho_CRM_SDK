@@ -10,8 +10,8 @@ use Zoho\OAuth\Common\ZohoOAuthException;
 
 class ZohoOAuthClient
 {
-    private $zohoOAuthParams;
-    private static $zohoOAuthClient;
+    protected $zohoOAuthParams;
+    protected static $zohoOAuthClient;
     
     private function __construct($params)
     {
@@ -160,7 +160,6 @@ class ZohoOAuthClient
         $connector->addHeadder(ZohoOAuthConstants::AUTHORIZATION, ZohoOAuthConstants::OAUTH_HEADER_PREFIX.$accessToken);
         $apiResponse=$connector->get();
         $jsonResponse=self::processResponse($apiResponse);
-        d($jsonResponse);
         return $jsonResponse['ZUID'];
     }
     public function processResponse($apiResponse)

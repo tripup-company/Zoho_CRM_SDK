@@ -13,7 +13,6 @@ use Zoho\CRM\Exception\APIExceptionHandler;
 use Zoho\CRM\Common\APIConstants;
 use Zoho\CRM\Api\APIRequest;
 
-
 class EntityAPIHandler extends APIHandler
 {
     protected $record=null;
@@ -348,50 +347,62 @@ class EntityAPIHandler extends APIHandler
     public function setRecordProperties($recordDetails)
     {
         foreach ($recordDetails as $key=>$value) {
-            if ("id"==$key) {
-                $this->record->setEntityId($value);
-            } elseif ("Product_Details"==$key) {
-                $this->setInventoryLineItems($value);
-            } elseif ("Participants"==$key) {
-                $this->setParticipants($value);
-            } elseif ("Pricing_Details"==$key) {
-                $this->setPriceDetails($value);
-            } elseif ("Created_By"==$key) {
-                $createdBy = ZCRMUser::getInstance($value["id"], $value["name"]);
-                $this->record->setCreatedBy($createdBy);
-            } elseif ("Modified_By"==$key) {
-                $modifiedBy = ZCRMUser::getInstance($value["id"], $value["name"]);
-                $this->record->setModifiedBy($modifiedBy);
-            } elseif ("Created_Time"==$key) {
-                $this->record->setCreatedTime("".$value);
-            } elseif ("Modified_Time"==$key) {
-                $this->record->setModifiedTime("".$value);
-            } elseif ("Last_Activity_Time"==$key) {
-                $this->record->setLastActivityTime("".$value);
-            } elseif ("Owner"==$key) {
-                $owner =ZCRMUser::getInstance($value["id"], $value["name"]);
-                $this->record->setOwner($owner);
-            } elseif ("Layout"==$key) {
-                $layout = null;
-                if ($value!=null) {
-                    $layout = ZCRMLayout::getInstance($value["id"]);
-                    $layout->setName($value["name"]);
-                }
-                $this->record->setLayout($layout);
-            } elseif ("Handler"==$key && $value!=null) {
-                $handler = ZCRMUser::getInstance($value["id"], $value["name"]);
-                $this->record->setFieldValue($key, $handler);
-            } elseif ("Tax"===$key && is_array($value)) {
-                foreach ($value as $taxName) {
-                    $taxIns=ZCRMTax::getInstance($taxName);
-                    $this->record->addTax($taxIns);
-                }
-            } elseif (substr($key, 0, 1)=="$") {
+            //check for standard field keys and set their respective values
+            switch ($key) {
+                case "id":$this->record->setEntityId($value); break;
+                case "Product_Details":$this->setInventoryLineItems($value); break;
+                case "Participants": $this->setParticipants($value); break;
+                case "Pricing_Details":$this->setPriceDetails($value); break;
+                case "Created_By":
+                    $createdBy = ZCRMUser::getInstance($value["id"], $value["name"]);
+                    $this->record->setCreatedBy($createdBy);
+                break;
+                case "Modified_By":
+                    $modifiedBy = ZCRMUser::getInstance($value["id"], $value["name"]);
+                    $this->record->setModifiedBy($modifiedBy);
+                break;
+                case "Created_Time": $this->record->setCreatedTime("".$value); break;
+                case "Modified_Time": $this->record->setModifiedTime("".$value); break;
+                case "Last_Activity_Time": $this->record->setLastActivityTime("".$value); break;
+                case "Owner":
+                    $owner =ZCRMUser::getInstance($value["id"], $value["name"]);
+                    $this->record->setOwner($owner);
+                break;
+                case "Layout":
+                    $layout = null;
+                    if ($value!=null) {
+                        $layout = ZCRMLayout::getInstance($value["id"]);
+                        $layout->setName($value["name"]);
+                    }
+                    $this->record->setLayout($layout);
+                break;
+                case "Handler":
+                    $handler = ZCRMUser::getInstance($value["id"], $value["name"]);
+                    $this->record->setFieldValue($key, $handler);
+                break;
+                case "Tax":
+                    if (is_array($value)) {
+                        foreach ($value as $taxName) {
+                            $taxIns=ZCRMTax::getInstance($taxName);
+                            $this->record->addTax($taxIns);
+                        }
+                    }
+                break;
+            }
+            //
+            if (substr($key, 0, 1)=="$") {
                 $this->record->setProperty(str_replace('$', '', $key), $value);
             } elseif (is_array($value)) {
                 if (isset($value["id"])) {
+                    //lookup record (is this returning all correct fields)
                     $lookupRecord = ZCRMRecord::getInstance($key, isset($value["id"])?$value["id"]:"0");
                     $lookupRecord->setLookupLabel(isset($value["name"])?$value["name"]:null);
+                    // $lookupRecordApi = EntityAPIHandler::getInstance($lookupRecord);
+                    // dd($lookupRecordApi->getRecord());
+                    // $ar = APIRequest::getInstance($lookupRecord);
+                    // $ar->setRequestMethod(APIConstants::REQUEST_METHOD_GET);
+                    // $ar->setUrl($lookupRecord->getModuleApiName()."/".$lookupRecord->getEntityId());
+                    // dd($ar);
                     $this->record->setFieldValue($key, $lookupRecord);
                 } else {
                     $this->record->setFieldValue($key, $value);

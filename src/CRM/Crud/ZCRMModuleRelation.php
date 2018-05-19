@@ -5,102 +5,97 @@ use Zoho\CRM\Api\Handler\RelatedListAPIHandler;
 
 class ZCRMModuleRelation
 {
-	
-	private $label=null;
-	private $apiName=null;
-	private $id=null;
-	private $parentModuleAPIName=null;
-	private $visible=null;
-	
-	private $parentRecord=null;
-	private $junctionRecord;
-	
-	private function __construct($parentModuleAPINameOrParentRecord,$relatedListAPINameOrJunctionRecord)
-	{
-		if($parentModuleAPINameOrParentRecord instanceof ZCRMRecord)
-		{
-			$this->parentRecord=$parentModuleAPINameOrParentRecord;
-		}
-		else
-		{
-			$this->parentModuleAPIName=$parentModuleAPINameOrParentRecord;
-		}
-		
-		if($relatedListAPINameOrJunctionRecord instanceof ZCRMJunctionRecord)
-		{
-			$this->junctionRecord=$relatedListAPINameOrJunctionRecord;
-		}
-		else {
-			$this->apiName=$relatedListAPINameOrJunctionRecord;
-		}
-	}
-	public static function getInstance($parentModuleAPINameOrParentRecord,$relatedListAPIName)
-	{
-		return new ZCRMModuleRelation($parentModuleAPINameOrParentRecord,$relatedListAPIName);
-	}
-	
-	public function getRecords($sortByField=null,$sortOrder=null,$page=1,$perPage=20)
-	{
-		return RelatedListAPIHandler::getInstance($this->parentRecord,$this)->getRecords($sortByField,$sortOrder,$page,$perPage);
-	}
-	
-	public function getNotes($sortByField=null,$sortOrder=null,$page=1,$perPage=20)
-	{
-		return RelatedListAPIHandler::getInstance($this->parentRecord,$this)->getNotes($sortByField,$sortOrder,$page,$perPage);
-	}
-	
-	public function addNote($zcrmNote)
-	{
-		return RelatedListAPIHandler::getInstance($this->parentRecord,$this)->addNote($zcrmNote);
-	}
-	
-	public function updateNote($zcrmNote)
-	{
-		return RelatedListAPIHandler::getInstance($this->parentRecord,$this)->updateNote($zcrmNote);
-	}
-	
-	public function deleteNote($zcrmNote)
-	{
-		return RelatedListAPIHandler::getInstance($this->parentRecord,$this)->deleteNote($zcrmNote);
-	}
-	
-	public function getAttachments($page,$perPage)
-	{
-		return RelatedListAPIHandler::getInstance($this->parentRecord,$this)->getAttachments($page,$perPage);
-	}
-	
-	public function uploadAttachment($filePath)
-	{
-		return RelatedListAPIHandler::getInstance($this->parentRecord,$this)->uploadAttachment($filePath);
-	}
-	public function uploadLinkAsAttachment($attachmentUrl)
-	{
-		return RelatedListAPIHandler::getInstance($this->parentRecord,$this)->uploadLinkAsAttachment($attachmentUrl);
-	}
-	
-	public function downloadAttachment($attachmentId)
-	{
-		return RelatedListAPIHandler::getInstance($this->parentRecord,$this)->downloadAttachment($attachmentId);
-	}
-	public function deleteAttachment($attachmentId)
-	{
-		return RelatedListAPIHandler::getInstance($this->parentRecord,$this)->deleteAttachment($attachmentId);
-	}
-	public function addRelation()
-	{
-		return RelatedListAPIHandler::getInstance($this->parentRecord, $this->junctionRecord)->addRelation();
-	}
-	public function removeRelation()
-	{
-		return RelatedListAPIHandler::getInstance($this->parentRecord, $this->junctionRecord)->removeRelation();
-	}
-	
+    private $label=null;
+    private $apiName=null;
+    private $id=null;
+    private $parentModuleAPIName=null;
+    private $visible=null;
+    
+    private $parentRecord=null;
+    private $junctionRecord;
+    
+    private function __construct($parentModuleAPINameOrParentRecord, $relatedListAPINameOrJunctionRecord)
+    {
+        if ($parentModuleAPINameOrParentRecord instanceof ZCRMRecord) {
+            $this->parentRecord=$parentModuleAPINameOrParentRecord;
+        } else {
+            $this->parentModuleAPIName=$parentModuleAPINameOrParentRecord;
+        }
+        
+        if ($relatedListAPINameOrJunctionRecord instanceof ZCRMJunctionRecord) {
+            $this->junctionRecord=$relatedListAPINameOrJunctionRecord;
+        } else {
+            $this->apiName=$relatedListAPINameOrJunctionRecord;
+        }
+    }
+    public static function getInstance($parentModuleAPINameOrParentRecord, $relatedListAPIName)
+    {
+        return new ZCRMModuleRelation($parentModuleAPINameOrParentRecord, $relatedListAPIName);
+    }
+    
+    public function getRecords($sortByField=null, $sortOrder=null, $page=1, $perPage=20)
+    {
+        return RelatedListAPIHandler::getInstance($this->parentRecord, $this)->getRecords($sortByField, $sortOrder, $page, $perPage);
+    }
+    
+    public function getNotes($sortByField=null, $sortOrder=null, $page=1, $perPage=20)
+    {
+        return RelatedListAPIHandler::getInstance($this->parentRecord, $this)->getNotes($sortByField, $sortOrder, $page, $perPage);
+    }
+    
+    public function addNote($zcrmNote)
+    {
+        return RelatedListAPIHandler::getInstance($this->parentRecord, $this)->addNote($zcrmNote);
+    }
+    
+    public function updateNote($zcrmNote)
+    {
+        return RelatedListAPIHandler::getInstance($this->parentRecord, $this)->updateNote($zcrmNote);
+    }
+    
+    public function deleteNote($zcrmNote)
+    {
+        return RelatedListAPIHandler::getInstance($this->parentRecord, $this)->deleteNote($zcrmNote);
+    }
+    
+    public function getAttachments($page, $perPage)
+    {
+        return RelatedListAPIHandler::getInstance($this->parentRecord, $this)->getAttachments($page, $perPage);
+    }
+    
+    public function uploadAttachment($filePath)
+    {
+        return RelatedListAPIHandler::getInstance($this->parentRecord, $this)->uploadAttachment($filePath);
+    }
+    public function uploadLinkAsAttachment($attachmentUrl)
+    {
+        return RelatedListAPIHandler::getInstance($this->parentRecord, $this)->uploadLinkAsAttachment($attachmentUrl);
+    }
+    
+    public function downloadAttachment($attachmentId)
+    {
+        return RelatedListAPIHandler::getInstance($this->parentRecord, $this)->downloadAttachment($attachmentId);
+    }
+    public function deleteAttachment($attachmentId)
+    {
+        return RelatedListAPIHandler::getInstance($this->parentRecord, $this)->deleteAttachment($attachmentId);
+    }
+    public function addRelation()
+    {
+        return RelatedListAPIHandler::getInstance($this->parentRecord, $this->junctionRecord)->addRelation();
+    }
+    public function removeRelation()
+    {
+        return RelatedListAPIHandler::getInstance($this->parentRecord, $this->junctionRecord)->removeRelation();
+    }
+    
 
     /**
      * label
      * @return String
      */
-    public function getLabel(){
+    public function getLabel()
+    {
         return $this->label;
     }
 
@@ -108,7 +103,8 @@ class ZCRMModuleRelation
      * label
      * @param String $label
      */
-    public function setLabel($label){
+    public function setLabel($label)
+    {
         $this->label = $label;
     }
 
@@ -116,7 +112,8 @@ class ZCRMModuleRelation
      * apiName
      * @return String
      */
-    public function getApiName(){
+    public function getApiName()
+    {
         return $this->apiName;
     }
 
@@ -124,7 +121,8 @@ class ZCRMModuleRelation
      * apiName
      * @param String $apiName
      */
-    public function setApiName($apiName){
+    public function setApiName($apiName)
+    {
         $this->apiName = $apiName;
     }
 
@@ -132,7 +130,8 @@ class ZCRMModuleRelation
      * id
      * @return Long
      */
-    public function getId(){
+    public function getId()
+    {
         return $this->id;
     }
 
@@ -140,7 +139,8 @@ class ZCRMModuleRelation
      * id
      * @param Long $id
      */
-    public function setId($id){
+    public function setId($id)
+    {
         $this->id = $id;
     }
 
@@ -148,7 +148,8 @@ class ZCRMModuleRelation
      * parentModuleAPIName
      * @return String
      */
-    public function getParentModuleAPIName(){
+    public function getParentModuleAPIName()
+    {
         return $this->parentModuleAPIName;
     }
 
@@ -156,7 +157,8 @@ class ZCRMModuleRelation
      * parentModuleAPIName
      * @param String $parentModuleAPIName
      */
-    public function setParentModuleAPIName($parentModuleAPIName){
+    public function setParentModuleAPIName($parentModuleAPIName)
+    {
         $this->parentModuleAPIName = $parentModuleAPIName;
     }
 
@@ -164,7 +166,8 @@ class ZCRMModuleRelation
      * visible
      * @return boolean
      */
-    public function getVisible(){
+    public function getVisible()
+    {
         return (boolean)$this->visible;
     }
 
@@ -172,7 +175,8 @@ class ZCRMModuleRelation
      * visible
      * @param boolean $visible
      */
-    public function setVisible($visible){
+    public function setVisible($visible)
+    {
         $this->visible = $visible;
     }
 
@@ -180,7 +184,8 @@ class ZCRMModuleRelation
      * parentRecord
      * @return ZCRMRecord
      */
-    public function getParentRecord(){
+    public function getParentRecord()
+    {
         return $this->parentRecord;
     }
 
@@ -188,9 +193,8 @@ class ZCRMModuleRelation
      * parentRecord
      * @param ZCRMRecord $parentRecord
      */
-    public function setParentRecord($parentRecord){
+    public function setParentRecord($parentRecord)
+    {
         $this->parentRecord = $parentRecord;
     }
-
 }
-?>

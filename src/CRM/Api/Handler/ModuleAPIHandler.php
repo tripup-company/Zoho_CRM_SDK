@@ -8,8 +8,10 @@ use Zoho\CRM\Setup\Users\ZCRMUser;
 use Zoho\CRM\Setup\Users\ZCRMProfile;
 use Zoho\CRM\Crud\ZCRMPickListValue;
 use Zoho\CRM\Crud\ZCRMLookupField;
-use Zoho\CRM\Api\Common\APIConstants;
+use Zoho\CRM\Common\APIConstants;
 use Zoho\CRM\Api\Handler\APIHandler;
+use Zoho\CRM\Api\APIRequest;
+use Zoho\CRM\Crud\ZCRMModule;
 use Zoho\CRM\Crud\ZCRMCustomView;
 use Zoho\CRM\Crud\ZCRMCustomViewCriteria;
 use Zoho\CRM\Crud\ZCRMCustomViewCategory;
@@ -21,7 +23,7 @@ use Zoho\CRM\Api\Handler\MetaDataAPIHandler;
 
 class ModuleAPIHandler extends APIHandler
 {
-    private $module=null;
+    protected $module=null;
     
     private function __construct($module)
     {

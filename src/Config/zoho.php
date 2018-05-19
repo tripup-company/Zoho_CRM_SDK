@@ -20,7 +20,7 @@ if (function_exists('env') && class_exists("Illuminate\Foundation\Application"))
         //still refactoring
         'access_token_url'          => env('ZOHO_ACCESS_TOKEN_URL', false),
         'refresh_token_url'         => env('ZOHO_REFRESH_TOKEN_URL', false),
-        'authorize_url'             => env('ZOHO_AUTHORIZE_URL', false),
+        'authorize_url'             => env('ZOHO_AUTHORIZE_URL', "false"),
         'v1_auth'                   => env('ZOHO_V1_AUTH', false),
         'grant_token'               => env('ZOHO_GRANT_TOKEN', false)
     ];

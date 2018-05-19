@@ -6,13 +6,14 @@ use Zoho\CRM\Api\Response\ResponseInfo;
 use Zoho\CRM\Api\Response\EntityResponse;
 use Zoho\CRM\Api\Response\CommonAPIResponse;
 use Zoho\CRM\Exception\ZCRMException;
+use Zoho\CRM\Exception\APIExceptionHandler;
 
 class BulkAPIResponse extends CommonAPIResponse
 {
-    private $bulkData=null;
-    private $status=null;
-    private $info=null;
-    private $bulkEntitiesResponse=null;
+    protected $bulkData=null;
+    protected $status=null;
+    protected $info=null;
+    protected $bulkEntitiesResponse=null;
     
     public function __construct($httpResponse, $httpStatusCode)
     {
@@ -25,7 +26,7 @@ class BulkAPIResponse extends CommonAPIResponse
     {
         $statusCode=self::getHttpStatusCode();
         if (in_array($statusCode, APIExceptionHandler::getFaultyResponseCodes())) {
-            if ($statusCode==APIConstants::RESPONSECODE_NO_CONTENT) {
+            if ($statusCode==APIConstants::RESPONSECODE_NO_CONTENT||$statusCode==APIConstants::RESPONSECODE_NOT_MODIFIED) {
                 $exception=new ZCRMException("No Content", $statusCode);
                 $exception->setExceptionCode("NO CONTENT");
                 throw $exception;

@@ -11,7 +11,7 @@ use Zoho\OAuth\Client\ZohoOAuthClient;
 
 class ZohoOAuth
 {
-    private static $configProperties =array();
+    protected static $configProperties =array();
     
     public static function initializeWithOutInputStream()
     {

@@ -3,16 +3,17 @@ namespace Zoho\CRM\Api\Handler;
 
 use Zoho\CRM\Api\Handler\EntityAPIHandler;
 use Zoho\CRM\Api\Handler\APIHandler;
+use Zoho\CRM\Api\APIRequest;
 use Zoho\CRM\Setup\Users\ZCRMUser;
 use Zoho\CRM\Crud\ZCRMNote;
 use Zoho\CRM\Crud\ZCRMAttachment;
-use Zoho\CRM\Api\Common\APIConstants;
+use Zoho\CRM\Common\APIConstants;
 
 class RelatedListAPIHandler extends APIHandler
 {
-    private $parentRecord=null;//ZCRMRecord
-    private $relatedList=null;//ZCRMModuleRelation
-    private $junctionRecord;//ZCRMJunctionRecord
+    protected $parentRecord=null;//ZCRMRecord
+    protected $relatedList=null;//ZCRMModuleRelation
+    protected $junctionRecord;//ZCRMJunctionRecord
     
     private function __construct($parentRecord, $relatedList)
     {
@@ -32,7 +33,15 @@ class RelatedListAPIHandler extends APIHandler
     public function getRecords($sortByField, $sortOrder, $page, $perPage)
     {
         try {
-            $this->urlPath=$this->parentRecord->getModuleApiName()."/".$this->parentRecord->getEntityId()."/".$this->relatedList->getApiName();
+            if (!is_null($this->relatedList)) {
+                $apiName = $this->relatedList->getApiName();
+            } elseif (!is_null($this->junctionRecord)) {
+                $apiName = $this->junctionRecord->getApiName();
+                if ($apiName == $this->parentRecord->getModuleApiName());
+                return;
+            }
+            
+            $this->urlPath=$this->parentRecord->getModuleApiName()."/".$this->parentRecord->getEntityId()."/".$apiName;
             $this->requestMethod=APIConstants::REQUEST_METHOD_GET;
             $this->addHeader("Content-Type", "application/json");
             if ($sortByField!=null) {
@@ -286,7 +295,7 @@ class RelatedListAPIHandler extends APIHandler
         $noteJson['Note_Content']=$noteIns->getContent();
         return $noteJson;
     }
-    private function getZCRMNote($noteDetails, $noteIns)
+    protected function getZCRMNote($noteDetails, $noteIns)
     {
         if ($noteIns==null) {
             $noteIns = ZCRMNote::getInstance($this->parentRecord, $noteDetails["id"]);
@@ -336,7 +345,7 @@ class RelatedListAPIHandler extends APIHandler
         return $noteIns;
     }
     
-    private function getZCRMAttachment($attachmentDetails)
+    protected function getZCRMAttachment($attachmentDetails)
     {
         $attachmentIns = ZCRMAttachment::getInstance($this->parentRecord, $attachmentDetails["id"]);
         $fileName=$attachmentDetails["File_Name"];

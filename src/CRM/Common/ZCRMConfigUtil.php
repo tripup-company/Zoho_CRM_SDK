@@ -8,7 +8,7 @@ use Zoho\CRM\Exception\ZCRMException;
 
 class ZCRMConfigUtil
 {
-    private static $configProperties = [];
+    protected static $configProperties = [];
     
     public static function getInstance()
     {

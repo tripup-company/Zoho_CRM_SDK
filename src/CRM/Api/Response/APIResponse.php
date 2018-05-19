@@ -3,12 +3,13 @@ namespace Zoho\CRM\Api\Response;
 
 use Zoho\CRM\Common\APIConstants;
 use Zoho\CRM\Exception\ZCRMException;
+use Zoho\CRM\Exception\APIExceptionHandler;
 use Zoho\CRM\Api\Response\CommonAPIResponse;
 
 class APIResponse extends CommonAPIResponse
 {
-    private $data=null;
-    private $status=null;
+    protected $data=null;
+    protected $status=null;
     
     
     public function __construct($httpResponse, $httpStatusCode, $apiName=null)
