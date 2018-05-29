@@ -106,7 +106,7 @@ class ZohoOAuth
                 //cheking for class set in config (this allows external handling of persistence tokens)
                 if (class_exists($persistenceHandlerClass)) {
                     //use defined class
-                    return new $persistenceHandlerClass();
+                    return new $persistenceHandlerClass;
                 } elseif (ZohoOAuth::getConfigValue("token_persistence_path")!="") {
                     return new ZohoOAuthPersistenceByFile();
                 } else {
