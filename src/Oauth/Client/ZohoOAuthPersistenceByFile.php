@@ -1,9 +1,8 @@
 <?php
-namespace Zoho\Oauth\ClientApp;
+namespace Zoho\Oauth\Client;
 
 use Zoho\Oauth\Common\OAuthLogger;
 use Zoho\Oauth\Common\ZohoOAuthTokens;
-use Zoho\Oauth\Client\ZohoOAuth;
 
 class ZohoOAuthPersistenceByFile implements ZohoOAuthPersistenceInterface
 {

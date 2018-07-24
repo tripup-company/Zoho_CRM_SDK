@@ -1,8 +1,8 @@
 <?php
-namespace Zoho\CRM\Api\Common;
+namespace Zoho\CRM\Common;
 
 use Zoho\CRM\Api\Response\APIResponse;
-use Zoho\CRM\Api\Common\APIConstants;
+use Zoho\CRM\Common\APIConstants;
 
 /**
  * Purpose of this class is to trigger API call and fetch the response
@@ -10,50 +10,42 @@ use Zoho\CRM\Api\Common\APIConstants;
  *
  */
 class ZohoHTTPConnector
-{
+{   
     private $url=null;
     private $requestParams = array();
     private $requestHeaders = array();
     private $requestParamCount=0;
     private $requestBody;
-    private $requestType=APIConstants::REQUEST_METHOD_GET;
+    private $requestType = 'GET';
     private $userAgent="ZohoCRM PHP SDK";
     private $apiKey=null;
     private $isBulkRequest=false;
     
-    private function __construct()
-    {
-    }
-    
-    public static function getInstance()
-    {
-        return new ZohoHTTPConnector();
-    }
-    
     public function fireRequest()
-    {
+    {   
         $curl_pointer=curl_init();
-        if (count(self::getRequestParamsMap())>0) {
-            $url=self::getUrl()."?".self::getUrlParamsAsString(self::getRequestParamsMap());
-            curl_setopt($curl_pointer, CURLOPT_URL, $url);
-        } else {
+        if (empty(self::getRequestParamsMap())) {
             curl_setopt($curl_pointer, CURLOPT_URL, self::getUrl());
+        } else {
+            $url = self::getUrl()."?".self::getUrlParamsAsString(self::getRequestParamsMap());
+            curl_setopt($curl_pointer, CURLOPT_URL, $url);
         }
+        
         curl_setopt($curl_pointer, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl_pointer, CURLOPT_HEADER, 1);
         curl_setopt($curl_pointer, CURLOPT_USERAGENT, $this->userAgent);
         curl_setopt($curl_pointer, CURLOPT_HTTPHEADER, self::getRequestHeadersAsArray());
         curl_setopt($curl_pointer, CURLOPT_CUSTOMREQUEST, APIConstants::REQUEST_METHOD_GET);
         
-        if ($this->requestType===APIConstants::REQUEST_METHOD_POST) {
-            curl_setopt($curl_pointer, CURLOPT_CUSTOMREQUEST, APIConstants::REQUEST_METHOD_POST);
+        if ($this->requestType === 'POST') {
+            curl_setopt($curl_pointer, CURLOPT_CUSTOMREQUEST, 'POST');
             curl_setopt($curl_pointer, CURLOPT_POST, true);
             curl_setopt($curl_pointer, CURLOPT_POSTFIELDS, $this->isBulkRequest?json_encode(self::getRequestBody()):self::getRequestBody());
-        } elseif ($this->requestType===APIConstants::REQUEST_METHOD_PUT) {
-            curl_setopt($curl_pointer, CURLOPT_CUSTOMREQUEST, APIConstants::REQUEST_METHOD_PUT);
+        } elseif ($this->requestType === 'PUT') {
+            curl_setopt($curl_pointer, CURLOPT_CUSTOMREQUEST, 'PUT');
             curl_setopt($curl_pointer, CURLOPT_POSTFIELDS, $this->isBulkRequest?json_encode(self::getRequestBody()):self::getRequestBody());
-        } elseif ($this->requestType===APIConstants::REQUEST_METHOD_DELETE) {
-            curl_setopt($curl_pointer, CURLOPT_CUSTOMREQUEST, APIConstants::REQUEST_METHOD_DELETE);
+        } elseif ($this->requestType === 'DELETE') {
+            curl_setopt($curl_pointer, CURLOPT_CUSTOMREQUEST, 'DELETE');
         }
         $result=curl_exec($curl_pointer);
         $responseInfo=curl_getinfo($curl_pointer);

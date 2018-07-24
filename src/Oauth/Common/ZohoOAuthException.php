@@ -1,7 +1,7 @@
 <?php
 namespace Zoho\Oauth\Common;
 
-class ZohoOAuthException extends Exception
+class ZohoOAuthException extends \Exception
 {
     protected $message = 'Unknown exception';     // Exception message
     private $string;                            // Unknown

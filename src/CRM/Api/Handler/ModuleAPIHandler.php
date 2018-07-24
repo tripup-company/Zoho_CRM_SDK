@@ -8,7 +8,7 @@ use Zoho\CRM\Setup\Users\ZCRMUser;
 use Zoho\CRM\Setup\Users\ZCRMProfile;
 use Zoho\CRM\Crud\ZCRMPickListValue;
 use Zoho\CRM\Crud\ZCRMLookupField;
-use Zoho\CRM\Api\Common\APIConstants;
+use Zoho\CRM\Common\APIConstants;
 use Zoho\CRM\Api\Handler\APIHandler;
 use Zoho\CRM\Crud\ZCRMCustomView;
 use Zoho\CRM\Crud\ZCRMCustomViewCriteria;

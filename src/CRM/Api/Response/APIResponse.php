@@ -4,10 +4,14 @@ namespace Zoho\CRM\Api\Response;
 use Zoho\CRM\Common\APIConstants;
 use Zoho\CRM\Exception\ZCRMException;
 use Zoho\CRM\Api\Response\CommonAPIResponse;
+use Zoho\CRM\Exception\APIExceptionHandler;
 
 class APIResponse extends CommonAPIResponse
-{
-    private $data=null;
+{   
+    /**
+     * @var ZCRMModule
+     */
+    private $data = null;
     private $status=null;
     
     
@@ -18,8 +22,11 @@ class APIResponse extends CommonAPIResponse
     
     public function setData($data)
     {
-        $this->data=$data;
+        $this->data = $data;
     }
+    /**
+     * @return ZCRMModule
+     */
     public function getData()
     {
         return $this->data;

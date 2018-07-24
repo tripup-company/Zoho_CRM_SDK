@@ -10,4 +10,5 @@ interface APIHandlerInterface
 	public function getRequestParams();
 	public function getRequestHeadersAsMap();
 	public function getRequestParamsAsMap();
+        public function getConfigs();
 }

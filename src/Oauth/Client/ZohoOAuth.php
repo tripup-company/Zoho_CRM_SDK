@@ -1,124 +1,72 @@
 <?php
+
 namespace Zoho\Oauth\Client;
 
-use Zoho\Oauth\Common\ZohoOAuthUtil;
-use Zoho\Oauth\Common\ZohoOAuthConstants;
-use Zoho\Oauth\Common\ZohoOAuthParams;
-use Zoho\Oauth\ClientApp\ZohoOAuthPersistenceHandler;
-use Zoho\Oauth\ClientApp\ZohoOAuthPersistenceByFile;
-use Zoho\Oauth\Common\OAuthLogger;
+use Zoho\Resources\InterfaceOAthConfigurations;
 
-use Zoho\Oauth\Client\ZohoOAuthClient;
+class ZohoOAuth {
 
-class ZohoOAuth
-{
-    private static $configProperties =array();
-    
-    public static function initializeWithOutInputStream()
-    {
-        self::initialize(false);
+    /**
+     * @var ZohoOAuth
+     */
+    protected static $instance;
+    protected $oAuthConfigs;
+    protected $authUrl;
+    protected $grantUrl;
+    protected $tokenUrl;
+    protected $tokenRefreshUrl;
+    protected $tokenRevokeUrl;
+    protected $userInfoUrl;
+
+    /**
+     * @param InterfaceOAthConfigurations $oauthConfigs
+     * @return ZohoOAuth
+     */
+    public static function getInstance($oauthConfigs) {
+        if (is_null(static::$instance)) :
+            static::$instance = new static($oauthConfigs);
+        endif;
+
+        return static::$instance;
     }
-    
-    public static function initialize($configFilePointer)
-    {
-        try {
-            $configPath=realpath(dirname(__FILE__)."/../../resources/oauth_configuration.properties");
-            $filePointer=fopen($configPath, "r");
-            self::$configProperties = ZohoOAuthUtil::getFileContentAsMap($filePointer);
-            if ($configFilePointer!=false) {
-                $properties=ZohoOAuthUtil::getFileContentAsMap($configFilePointer);
-                foreach ($properties as $key=>$value) {
-                    self::$configProperties[$key]=$value;
-                }
-            }
-            //self::$configProperties[ZohoOAuthConstants::IAM_URL]= "https://accounts.zoho.com";
-            $oAuthParams=new ZohoOAuthParams();
-            
-            $oAuthParams->setAccessType(self::getConfigValue(ZohoOAuthConstants::ACCESS_TYPE));
-            $oAuthParams->setClientId(self::getConfigValue(ZohoOAuthConstants::CLIENT_ID));
-            $oAuthParams->setClientSecret(self::getConfigValue(ZohoOAuthConstants::CLIENT_SECRET));
-            $oAuthParams->setRedirectURL(self::getConfigValue(ZohoOAuthConstants::REDIRECT_URL));
-            ZohoOAuthClient::getInstance($oAuthParams);
-        } catch (IOException $ioe) {
-            OAuthLogger::warn("Exception while initializing Zoho OAuth Client.. ". ioe);
-            throw ioe;
-        }
+
+    /**
+     * 
+     * @param InterfaceOAthConfigurations $oauthConfigs
+     * @throws \Exception
+     */
+    protected function __construct($oauthConfigs) {
+        $this->oAuthConfigs = $oauthConfigs;
+        $this->authUrl = $this->oAuthConfigs->getAccountsUrl();
+        $this->grantUrl = $this->authUrl . '/oauth/v2/auth';
+        $this->tokenUrl = $this->authUrl . '/oauth/v2/token';
+        $this->tokenRefreshUrl = $this->authUrl . '/oauth/v2/token';
+        $this->tokenRevokeUrl = $this->authUrl . '/oauth/v2/token/revoke';
+        $this->userInfoUrl = $this->authUrl . '/oauth/user/info';
     }
-    
-    public static function getConfigValue($key)
-    {
-        return self::$configProperties[$key];
+
+    public function getIAMUrl() {
+        return $this->authUrl;
     }
-    
-    public static function getAllConfigs()
-    {
-        return self::$configProperties;
+
+    public function getGrantUrl() {
+        return $this->grantUrl;
     }
-    
-    public static function getIAMUrl()
-    {
-        return self::getConfigValue(ZohoOAuthConstants::IAM_URL);
+
+    public function getTokenUrl() {
+        return $this->tokenUrl;
     }
-    
-    public static function getGrantURL()
-    {
-        return self::getIAMUrl()."/oauth/v2/auth";
+
+    public function getRefreshTokenUrl() {
+        return $this->tokenRefreshUrl;
     }
-    
-    public static function getTokenURL()
-    {
-        return self::getIAMUrl()."/oauth/v2/token";
+
+    public function getRevokeTokenURL() {
+        return $this->tokenRevokeUrl;
     }
-    
-    public static function getRefreshTokenURL()
-    {
-        return self::getIAMUrl()."/oauth/v2/token";
+
+    public function getUserInfoUrl() {
+        return $this->userInfoUrl;
     }
-    
-    public static function getRevokeTokenURL()
-    {
-        return self::getIAMUrl()."/oauth/v2/token/revoke";
-    }
-    
-    public static function getUserInfoURL()
-    {
-        return self::getIAMUrl()."/oauth/user/info";
-    }
-    
-    public static function getClientID()
-    {
-        return self::getConfigValue(ZohoOAuthConstants::CLIENT_ID);
-    }
-    
-    public static function getClientSecret()
-    {
-        return self::getConfigValue(ZohoOAuthConstants::CLIENT_SECRET);
-    }
-    
-    public static function getRedirectURL()
-    {
-        return self::getConfigValue(ZohoOAuthConstants::REDIRECT_URL);
-    }
-    
-    public static function getAccessType()
-    {
-        return self::getConfigValue(ZohoOAuthConstants::ACCESS_TYPE);
-    }
-    
-    public static function getPersistenceHandlerInstance()
-    {
-        try {
-            return ZohoOAuth::getConfigValue("token_persistence_path")!=""?new ZohoOAuthPersistenceByFile():new ZohoOAuthPersistenceHandler();
-        } catch (Exception $ex) {
-            throw new ZohoOAuthException($ex);
-        }
-    }
-    
-    public static function getClientInstance()
-    {
-        if (ZohoOAuthClient::getInstanceWithOutParam() == null) {
-            throw new ZohoOAuthException("ZohoOAuth.initializeWithOutInputStream() must be called before this.");
-        }
-        return ZohoOAuthClient::getInstanceWithOutParam();
-    }
+
 }

@@ -1,7 +1,7 @@
 <?php
 namespace Zoho\CRM\Api\Response;
 
-use Zoho\CRM\Api\Common\APIConstants;
+use Zoho\CRM\Common\APIConstants;
 
 class ResponseInfo
 {
@@ -83,4 +83,3 @@ class ResponseInfo
     }
 
 }
-?>

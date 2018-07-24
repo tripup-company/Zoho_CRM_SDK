@@ -5,20 +5,32 @@ use Zoho\CRM\Crud\ZCRMRecord;
 use Zoho\CRM\Crud\ZCRMTrashRecord;
 use Zoho\CRM\Api\Handler\EntityAPIHandler;
 use Zoho\CRM\Api\Handler\APIHandler;
+use Zoho\CRM\Common\APIConstants;
+use Zoho\CRM\Api\APIRequest;
 
-class MassEntityAPIHandler extends APIHandler
-{
-	private $module=null;
+class MassEntityAPIHandler extends APIHandler {
+        
+        /**
+         * @var ZCRMModule $module
+         */
+	private $module;
 	
-	public function __construct($moduleInstance)
-	{
-		$this->module=$moduleInstance;
+        /**
+         * @param ZCRMModule $moduleInstance
+         */
+	public function __construct($moduleInstance) {
+            $this->module = $moduleInstance;
+            $this->configs = $moduleInstance->getConfigs();
+            $this->apiKey = $moduleInstance->getApiKey();
 	}
 	
-	public static function getInstance($moduleInstance)
-	{
-		return new MassEntityAPIHandler($moduleInstance);
+        /**
+         * @param ZCRMModule $moduleInstance
+         */
+	public static function getInstance($moduleInstance) {
+            return new MassEntityAPIHandler($moduleInstance);
 	}
+        
 	public function createRecords($records)
 	{
 		if(sizeof($records) > 100)
@@ -27,7 +39,7 @@ class MassEntityAPIHandler extends APIHandler
 		}
 		try{
 			$this->urlPath=$this->module->getAPIName();
-			$this->requestMethod=APIConstants::REQUEST_METHOD_POST;
+			$this->requestMethod = 'POST';
 			$this->addHeader("Content-Type","application/json");
 			$requestBodyObj = array();
 			$dataArray = array();
@@ -46,7 +58,8 @@ class MassEntityAPIHandler extends APIHandler
 			$this->requestBody = $requestBodyObj;
 			
 			//Fire Request
-			$bulkAPIResponse = APIRequest::getInstance($this)->getBulkAPIResponse();
+                        $apiRequest = new APIRequest($this);
+			$bulkAPIResponse = $apiRequest->getBulkAPIResponse();
 			$createdRecords=array();
 			$responses=$bulkAPIResponse->getEntityResponses();
 			$size=sizeof($responses);
@@ -99,7 +112,8 @@ class MassEntityAPIHandler extends APIHandler
 			$this->requestBody = $requestBodyObj;
 				
 			//Fire Request
-			$bulkAPIResponse = APIRequest::getInstance($this)->getBulkAPIResponse();
+			$apiRequest = new APIRequest($this);
+			$bulkAPIResponse = $apiRequest->getBulkAPIResponse();
 			$upsertRecords=array();
 			$responses=$bulkAPIResponse->getEntityResponses();
 			$size=sizeof($responses);
@@ -152,7 +166,8 @@ class MassEntityAPIHandler extends APIHandler
 			$this->requestBody = $requestBodyObj;
 			
 			//Fire Request
-			$bulkAPIResponse = APIRequest::getInstance($this)->getBulkAPIResponse();
+			$apiRequest = new APIRequest($this);
+			$bulkAPIResponse = $apiRequest->getBulkAPIResponse();
 			$upsertRecords=array();
 			$responses=$bulkAPIResponse->getEntityResponses();
 			$size=sizeof($responses);
@@ -194,7 +209,8 @@ class MassEntityAPIHandler extends APIHandler
 			$this->addParam("ids", implode(",", $entityIds));//converts array to string with specified seperator
 			
 			//Fire Request
-			$bulkAPIResponse = APIRequest::getInstance($this)->getBulkAPIResponse();
+                        $apiRequest = new APIRequest($this);
+			$bulkAPIResponse = $apiRequest->getBulkAPIResponse();
 			$responses=$bulkAPIResponse->getEntityResponses();
 				
 			foreach ($responses as $entityResIns)
@@ -235,7 +251,8 @@ class MassEntityAPIHandler extends APIHandler
 			$this->addHeader("Content-Type","application/json");
 			$this->addParam("type",$type);
 			
-			$responseInstance=APIRequest::getInstance($this)->getBulkAPIResponse();
+			$apiRequest = new APIRequest($this);
+			$responseInstance = $apiRequest->getBulkAPIResponse();
 			$responseJSON=$responseInstance->getResponseJSON();
 			$trashRecords=$responseJSON["data"];
 			$trashRecordList=array();
@@ -282,7 +299,7 @@ class MassEntityAPIHandler extends APIHandler
 	{
 		try{
 			$this->urlPath=$this->module->getAPIName();
-			$this->requestMethod=APIConstants::REQUEST_METHOD_GET;
+			$this->requestMethod = 'GET';
 			$this->addHeader("Content-Type","application/json");
 			if($cvId!=null)
 			{
@@ -299,7 +316,8 @@ class MassEntityAPIHandler extends APIHandler
 			$this->addParam("page",$page+0);
 			$this->addParam("per_page",$perPage+0);
 			
-			$responseInstance=APIRequest::getInstance($this)->getBulkAPIResponse();
+			$apiRequest = new APIRequest($this);
+			$responseInstance = $apiRequest->getBulkAPIResponse();
 			$responseJSON=$responseInstance->getResponseJSON();
 			$records=$responseJSON["data"];
 			$recordsList=array();
@@ -343,7 +361,8 @@ class MassEntityAPIHandler extends APIHandler
 			}
 			$this->addParam("page",$page+0);
 			$this->addParam("per_page",$perPage+0);
-			$responseInstance=APIRequest::getInstance($this)->getBulkAPIResponse();
+                        $apiRequest = new APIRequest($this);
+			$responseInstance = $apiRequest->getBulkAPIResponse();
 			$responseJSON=$responseInstance->getResponseJSON();
 			$records=$responseJSON["data"];
 			$recordsList=array();
@@ -377,7 +396,8 @@ class MassEntityAPIHandler extends APIHandler
 			$this->addHeader("Content-Type","application/json");
 			$this->requestBody=$inputJSON;
 			$this->apiKey='data';
-			$bulkAPIResponse=APIRequest::getInstance($this)->getBulkAPIResponse();
+			$apiRequest = new APIRequest($this);
+			$bulkAPIResponse = $apiRequest->getBulkAPIResponse();
 			
 			$updatedRecords=array();
 			$responses=$bulkAPIResponse->getEntityResponses();

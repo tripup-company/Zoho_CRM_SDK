@@ -40,6 +40,16 @@ class ZCRMModule
 	private $customView=null;
 	private $globalSearchSupported;
 	private $sequenceNumber;
+        
+        /**
+         * @var InterfaceConfigurations $configs
+         */
+        protected $configs;
+        
+        /**
+         * @var string $apiKey
+         */
+        protected $apiKey;
 	
 	private function __construct($apiName)
 	{
@@ -414,6 +424,21 @@ class ZCRMModule
     	$this->sequenceNumber = $sequenceNumber;
     }
     
+    public function setConfigs($configs) {
+        $this->configs = $configs;
+    }
+    
+    public function setApiKey($apiKey) {
+        $this->apiKey = $apiKey;
+    }
+    
+    public function getConfigs() {
+        return $this->configs;
+    }
+    
+    public function getApiKey() {
+        return $this->apiKey;
+    }
     
     /**
      * Returns the specified field of the module.

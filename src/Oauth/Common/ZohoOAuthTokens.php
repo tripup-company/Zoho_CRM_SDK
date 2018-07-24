@@ -61,10 +61,16 @@ class ZohoOAuthTokens
 
     /**
      * userEmailId
-     * @param String $userEmailId
+     * @param mixed $userEmailId
      */
-    public function setUserEmailId($userEmailId)
-    {
+    public function setUserEmailId($userEmailId = null) {
         $this->userEmailId = $userEmailId;
+    }
+    
+    /**
+     * @return array
+     */
+    public function toArray() {
+        return get_object_vars($this);
     }
 }

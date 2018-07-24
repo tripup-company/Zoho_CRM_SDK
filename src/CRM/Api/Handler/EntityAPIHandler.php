@@ -10,6 +10,7 @@ use Zoho\CRM\Common\APIConstants;
 use Zoho\CRM\Api\APIRequest;
 use Zoho\CRM\Crud\ZCRMPriceBookPricing;
 use Zoho\CRM\Crud\ZCRMEventParticipant;
+use Zoho\CRM\Setup\Users\ZCRMUser;
 
 class EntityAPIHandler extends APIHandler
 {

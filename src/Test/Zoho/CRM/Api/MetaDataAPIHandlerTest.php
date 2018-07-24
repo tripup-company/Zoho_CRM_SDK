@@ -3,7 +3,7 @@ namespace Zoho\Test\Zoho\CRM\Api;
 
 use Zoho\Test\Zoho\CRM\Common\Helper;
 use Zoho\Test\Zoho\Main;
-use Zoho\CRM\Api\Common\APIConstants;
+use Zoho\CRM\Common\APIConstants;
 
 class MetaDataAPIHandlerTest
 {

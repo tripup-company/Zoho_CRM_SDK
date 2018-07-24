@@ -1,73 +1,90 @@
 <?php
+
 namespace Zoho\CRM\Common;
 
-use Zoho\CRM\Common\CommonUtil;
 use Zoho\Oauth\Client\ZohoOAuth;
+use Zoho\Resources\InterfaceConfigurations;
+use Zoho\Resources\InterfaceOAthConfigurations;
+use Zoho\CRM\Exception\ZCRMException;
 
-class ZCRMConfigUtil
-{
-    private static $configProperties=array();
+class ZCRMConfigUtil {
+
+    /**
+     * @var ZCRMRestClient
+     */
+    protected static $instance;
+
+    /**
+     * @type InterfaceConfigurations $configs
+     */
+    protected $configs;
+
+    /**
+     * @type InterfaceOAthConfigurations $oauthConfigs
+     */
+    protected $oauthConfigs;
+
+    /**
+     * @type ZohoOAuth
+     */
+    protected $oAuth;
     
-    public static function getInstance()
-    {
-        return new ZCRMConfigUtil();
+    
+    /**
+     * @return ZCRMConfigUtil
+     */
+    public static function getInstance() {
+        if (is_null(static::$instance)) :
+            static::$instance = new static();
+        endif;
+
+        return static::$instance;
     }
-    public static function initialize($initializeOAuth)
-    {
-        $path=realpath(dirname(__FILE__)."/../../../resources/configuration.properties");
-        $fileHandler=fopen($path, "r");
-        if (!$fileHandler) {
-            return;
+
+    /**
+     * @param InterfaceConfigurations $configs
+     * @param InterfaceOAthConfigurations $oauthConfigs
+     */
+    protected function __construct(InterfaceConfigurations $configs, InterfaceOAthConfigurations $oauthConfigs) {
+        $this->configs = $configs;
+        $this->oauthConfigs = $oauthConfigs;
+        $this->oAuth = ZohoOAuth::getInstance($oauthConfigs); //@todo ??!!
+    }
+    
+    /**
+     * 
+     * @return type
+     * @throws ZCRMException
+     */
+    public function getAccessToken() {
+        $currentUserEmail = $this->configs->getCurrentUserEmail();
+
+        if (empty($currentUserEmail)) {
+           throw new ZCRMException("You need to set 'currentUserEmail' in Zoho\Resources\Configurations");
         }
-        self::$configProperties=CommonUtil::getFileContentAsMap($fileHandler);
         
-        if ($initializeOAuth) {
-            ZohoOAuth::initializeWithOutInputStream();
-        }
+        $oAuthClient = $this->oAuth->getClientInstance();
+        return $oAuthClient->getAccessToken($currentUserEmail);
     }
-    
-    public static function loadConfigProperties($fileHandler)
-    {
-        $configMap=CommonUtil::getFileContentAsMap($fileHandler);
-        foreach ($configMap as $key=>$value) {
-            self::$configProperties[$key]=$value;
-        }
+
+    /**
+     * @return string
+     */
+    public function getApiBaseUrl() {
+        return $this->configs->getApiBaseUrl();
     }
-    
-    public static function getConfigValue($key)
-    {
-        return isset(self::$configProperties[$key])?self::$configProperties[$key]:'';
+
+    /**
+     * @return string
+     */
+    public function getApiVersion() {
+        return $this->configs->getApiVersion();
     }
-    
-    public static function setConfigValue($key, $value)
-    {
-        self::$configProperties[$key]=$value;
-    }
-    
-    public static function getAPIBaseUrl()
-    {
-        return self::getConfigValue("apiBaseUrl");
-    }
-    
-    public static function getAPIVersion()
-    {
-        return self::getConfigValue("apiVersion");
-    }
-    public static function getAccessToken()
-    {
-        $currentUserEmail= ZCRMRestClient::getCurrentUserEmailID();
-        
-        if ($currentUserEmail == null && self::getConfigValue("currentUserEmail") == null) {
-            throw new ZCRMException("Current user should either be set in ZCRMRestClient or in configuration.properties file");
-        } elseif ($currentUserEmail == null) {
-            $currentUserEmail = self::getConfigValue("currentUserEmail");
-        }
-        $oAuthCliIns = ZohoOAuth::getClientInstance();
-        return $oAuthCliIns->getAccessToken($currentUserEmail);
-    }
-    
-    public static function getAllConfigs()
-    {
-        return self::$configProperties;
+
+    /**
+     * @return InterfaceConfigurations
+     */
+    public function getAllConfigs() {
+        return $this->configs;
     }
 }

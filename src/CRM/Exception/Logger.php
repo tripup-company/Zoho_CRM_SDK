@@ -2,18 +2,26 @@
 namespace Zoho\CRM\Exception;
 
 use Zoho\CRM\Common\ZCRMConfigUtil;
+use Zoho\Resources\Configurations;
 
 class Logger
 {
-    public static function writeToFile($msg)
-    {
-        set_include_path(ZCRMConfigUtil::getConfigValue('applicationLogFilePath'));
-        $path=get_include_path();
-        if ($path{strlen($path)-1}!='\/') {
-            $path=$path."/";
+    public static function writeToFile($msg) {
+        $config = Configurations::getInstance();
+        $logFilePath = $config->getAppLogFilePath();
+        
+        if (empty($logFilePath)) {
+            throw new \Exception('Log file path is not set.');
         }
-        $path=str_replace("\n", "", $path);
-        $filePointer=fopen($path."ZCRMClientLibrary.log", "a");
+        
+        set_include_path($loggerFilePath);
+        $path = get_include_path();
+        if ($path{strlen($path)-1} != '\/') {
+            $path = $path . '/';
+        }
+        
+        $path = str_replace("\n", "", $path);
+        $filePointer = fopen($path."ZCRMClientLibrary.log", "a");
         if (!$filePointer) {
             return;
         }

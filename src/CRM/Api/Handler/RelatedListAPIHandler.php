@@ -6,7 +6,7 @@ use Zoho\CRM\Api\Handler\APIHandler;
 use Zoho\CRM\Setup\Users\ZCRMUser;
 use Zoho\CRM\Crud\ZCRMNote;
 use Zoho\CRM\Crud\ZCRMAttachment;
-use Zoho\CRM\Api\Common\APIConstants;
+use Zoho\CRM\Common\APIConstants;
 
 class RelatedListAPIHandler extends APIHandler
 {

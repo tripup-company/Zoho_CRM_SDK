@@ -2,7 +2,7 @@
 namespace Zoho\CRM\Api\Response;
 
 use Zoho\CRM\Api\Response\APIResponse;
-use Zoho\CRM\Api\Common\APIConstants;
+use Zoho\CRM\Common\APIConstants;
 
 class OldFileAPIResponse extends APIResponse
 {

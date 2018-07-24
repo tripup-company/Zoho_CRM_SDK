@@ -1,7 +1,7 @@
 <?php
 namespace Zoho\CRM\Exception;
 
-class ZCRMException extends Exception
+class ZCRMException extends \Exception
 {
     protected $message = 'Unknown exception';     // Exception message
     private $string;                            // Unknown

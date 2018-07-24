@@ -2,47 +2,58 @@
 namespace Zoho\Oauth\Common;
 
 use Zoho\Oauth\Common\ZohoOAuthConstants;
+use Zoho\Oauth\Common\ZohoOAuthParams;
 
 class ZohoOAuthHTTPConnector
 {
     private $url;
     private $requestParams = array();
     private $requestHeaders = array();
-    private $requestParamCount=0;
-     
-    public function post()
-    {
+    private $requestParamCount = 0;
+    
+    /**
+     * @param ZohoOAuthParams $oAuthParams
+     */
+    public function __construct($oAuthParams) {
+        $this->addParam('client_id', $oAuthParams->getClientId());
+        $this->addParam('client_secret', $oAuthParams->getClientSecret());
+        $this->addParam('redirect_uri', $oAuthParams->getRedirectUrl());
+    }
+    
+    public function post() {
         $curl_pointer=curl_init();
-        curl_setopt($curl_pointer, CURLOPT_URL, self::getUrl());
+        curl_setopt($curl_pointer, CURLOPT_URL, $this->getUrl());
         curl_setopt($curl_pointer, CURLOPT_HEADER, 1);
-        curl_setopt($curl_pointer, CURLOPT_POSTFIELDS, self::getUrlParamsAsString($this->requestParams));
+        curl_setopt($curl_pointer, CURLOPT_POSTFIELDS, $this->getUrlParamsAsString($this->requestParams));
         curl_setopt($curl_pointer, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl_pointer, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
-        curl_setopt($curl_pointer, CURLOPT_HTTPHEADER, self::getRequestHeadersAsArray());
+        curl_setopt($curl_pointer, CURLOPT_HTTPHEADER, $this->getRequestHeadersAsArray());
         curl_setopt($curl_pointer, CURLOPT_POST, $this->requestParamCount);
-        curl_setopt($curl_pointer, CURLOPT_CUSTOMREQUEST, ZohoOAuthConstants::REQUEST_METHOD_POST);
-        $result=curl_exec($curl_pointer);
+        curl_setopt($curl_pointer, CURLOPT_CUSTOMREQUEST, 'POST');
+        $result = curl_exec($curl_pointer);
         curl_close($curl_pointer);
         
         return $result;
     }
     
-    public function get()
-    {
-        $curl_pointer=curl_init();
-        $url=self::getUrl()."?".http_build_query($this->requestParams);
+    public function get() {
+        $curl_pointer = curl_init();
+        $url = $this->clearHttpString($this->getUrl() . "?" . http_build_query($this->requestParams));
         curl_setopt($curl_pointer, CURLOPT_URL, $url);
         curl_setopt($curl_pointer, CURLOPT_HEADER, 1);
         curl_setopt($curl_pointer, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl_pointer, CURLOPT_HTTPHEADER, self::getRequestHeadersAsArray());
+        curl_setopt($curl_pointer, CURLOPT_HTTPHEADER, $this->getRequestHeadersAsArray());
         curl_setopt($curl_pointer, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
-        curl_setopt($curl_pointer, CURLOPT_CUSTOMREQUEST, ZohoOAuthConstants::REQUEST_METHOD_GET);
-        $result=curl_exec($curl_pointer);
+        curl_setopt($curl_pointer, CURLOPT_CUSTOMREQUEST, 'GET');
+        $result = curl_exec($curl_pointer);
         curl_close($curl_pointer);
         
         return $result;
     }
     
+    protected function clearHttpString($url) {
+        return (preg_match('/%5B0%5D/', $url)) ? preg_replace('/%5B0%5D/', '', $url) : $url;
+    }
     
     public function getUrl()
     {

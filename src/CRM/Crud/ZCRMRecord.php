@@ -1,7 +1,7 @@
 <?php 
 namespace Zoho\CRM\Crud;
 use Zoho\CRM\Api\Handler\EntityAPIHandler;
-use Zoho\CRM\Api\Common\APIConstants;
+use Zoho\CRM\Common\APIConstants;
 use Zoho\CRM\Crud\ZCRMModuleRelation;
 
 /**

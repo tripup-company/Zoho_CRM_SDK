@@ -1,7 +1,7 @@
 <?php
 namespace Zoho\Test\Zoho\CRM\Common;
 
-use Zoho\CRM\Api\Common\APIConstants;
+use Zoho\CRM\Common\APIConstants;
 use Zoho\Test\Zoho\CRM\Common\PHPUnitTestUtil;
 
 class APIConstantsTest extends \PHPUnit_Framework_TestCase
