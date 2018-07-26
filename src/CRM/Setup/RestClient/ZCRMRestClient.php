@@ -4,18 +4,12 @@ namespace Zoho\CRM\Setup\RestClient;
 
 use Zoho\CRM\Api\Handler\MetaDataAPIHandler;
 use Zoho\CRM\Api\Handler\OrganizationAPIHandler;
-use Zoho\CRM\Crud\ZCRMModule;
-use Zoho\CRM\Crud\ZCRMRecord;
-use Zoho\Oauth\Common\ZohoOAuthParams;
-use Zoho\Oauth\Common\OAuthLogger;
-use Zoho\Oauth\Client\ZohoOAuth;
 use Zoho\Resources\InterfaceConfigurations;
 use Zoho\Resources\InterfaceOAuthConfigurations;
 use Zoho\Oauth\Client\ZohoOAuthClient;
-
-use Zoho\CRM\Common\APIConstants;
-
-use Zoho\CRM\Setup\MetaData\ZCRMOrganization;
+use Zoho\CRM\Exception\ZCRMException;
+use Zoho\CRM\Api\Response\APIResponse;
+use Zoho\CRM\Api\Response\BulkAPIResponse;
 
 class ZCRMRestClient {
 
@@ -62,8 +56,6 @@ class ZCRMRestClient {
     }
 
     /**
-     * @todo May be move to constructor without requesting this extra method to work with API?
-     * 
      * @return ZohoOAuthClient
      * @throws \Exception
      */
@@ -108,7 +100,7 @@ class ZCRMRestClient {
     
    
     /**
-     * @return getBulkAPIResponse
+     * @return BulkAPIResponse
      */
     public function getCurrentUser() {
         return OrganizationAPIHandler::getInstance($this->configs, $this->getAccessToken())->getCurrentUser();

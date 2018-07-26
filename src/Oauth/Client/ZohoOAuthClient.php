@@ -102,7 +102,7 @@ class ZohoOAuthClient {
             OAuthLogger::severe("Exception while retrieving tokens from persistence - " . $ex);
             throw $ex;
         } catch (\Exception $ex) {
-            OAuthLogger::severe("Exception while retrieving tokens from persistence - " . $ex); //@todo
+            OAuthLogger::severe("Exception while retrieving tokens from persistence - " . $ex);
             throw new ZohoOAuthException($ex);
         }
 
@@ -158,7 +158,7 @@ class ZohoOAuthClient {
      * @param mixed $userEmailId
      */
     public function generateAccessTokenFromRefreshToken($refreshToken, $userEmailId = null) {
-        $this->refreshAccessToken($refreshToken, $userEmailId);
+        return $this->refreshAccessToken($refreshToken, $userEmailId);
     }
 
     public function refreshAccessToken($refreshToken, $userEmailId = null) {
@@ -171,7 +171,6 @@ class ZohoOAuthClient {
             $responseJSON = $this->processResponse($response);
             if (array_key_exists('access_token', $responseJSON)) {
                 $tokens = $this->getTokensFromJSON($responseJSON);
-                $tokens->setRefreshToken($refreshToken);
                 //@todo getUserEmailIdFromIAM request doesn't work in original SDK
                 //$tokens->setUserEmailId($userEmailId);
                 $this->persistenceHandler->saveOAuthData($tokens);

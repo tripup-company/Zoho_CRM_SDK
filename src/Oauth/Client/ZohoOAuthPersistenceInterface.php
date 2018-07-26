@@ -14,7 +14,7 @@ interface ZohoOAuthPersistenceInterface {
     /**
      * Get oAuth tokens
      * 
-     * @param array $userEmailId
+     * @param mixed $userEmailId
      */
     public function getOAuthTokens($userEmailId);
     

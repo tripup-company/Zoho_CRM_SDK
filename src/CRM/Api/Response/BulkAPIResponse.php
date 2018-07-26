@@ -6,7 +6,7 @@ use Zoho\CRM\Api\Response\ResponseInfo;
 use Zoho\CRM\Api\Response\EntityResponse;
 use Zoho\CRM\Api\Response\CommonAPIResponse;
 use Zoho\CRM\Exception\ZCRMException;
-
+use Zoho\CRM\Exception\APIExceptionHandler;
 
 class BulkAPIResponse extends CommonAPIResponse
 {
@@ -121,4 +121,3 @@ class BulkAPIResponse extends CommonAPIResponse
 
 
 }
-?>
