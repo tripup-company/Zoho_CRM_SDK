@@ -2,10 +2,12 @@
 
 namespace Zoho\Resources;
 
+use Zoho\Oauth\Client\ZohoOAuthPersistenceHandler;
+
 class Configurations implements InterfaceConfigurations {
-    
+
     use TraitConfigurations;
-    
+
     /**
      * @type InterfaceConfigurations
      */
@@ -52,16 +54,48 @@ class Configurations implements InterfaceConfigurations {
      * @param array $configurations
      */
     protected function __construct($configurations) {
-        if (!empty($configurations)) {
-            //@todo Separate Exception handler
-            try {
-                $this->setDataFromArray($configurations);
-            } catch (\Exception $e) {
-                echo 'Warrning: ' . $e->getMessage() . "\n";
+        $configurations = $this->separateDbConfigs($configurations);
+        
+        try {
+            if (empty($configurations)) {
+                throw new \Exception('Set full list of required configurations.');
             }
+            $this->setDataFromArray($configurations);
+        } catch (\Exception $e) {
+            echo 'Warrning: ' . $e->getMessage() . "\n";
         }
     }
-
+    
+    /**
+     * @param array $configurations
+     * @return array
+     */
+    protected function separateDbConfigs($configurations) {
+        $dbConfigsList = null;
+        
+        if ($configurations['database'] || $configurations['databaseType']) {
+            foreach ($configurations as $key => $configItem) {
+                if (preg_match('/database/', $key)) {
+                    $dbConfigsList[$key] = $configItem;
+                    unset($configurations[$key]);
+                }
+            }
+        }
+        
+        if (!empty($dbConfigsList)) {
+            $db = new DbConfigurations();
+            $type = $dbConfigsList['databaseType'];
+            $db->setDatabaseType($type);
+            $db->setDatabaseHost($dbConfigsList['database'][$type]['host']);
+            $db->setDatabaseName($dbConfigsList['database'][$type]['db']);
+            $db->setUserName($dbConfigsList['database'][$type]['user']);
+            $db->setUserPassword($dbConfigsList['database'][$type]['pass']);
+            ZohoOAuthPersistenceHandler::$databaseConfigs = $db;
+        }
+        
+        return $configurations;
+    }
+    
     /**
      * {@inheritDoc}
      */

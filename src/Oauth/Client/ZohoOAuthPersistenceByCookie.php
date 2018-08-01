@@ -66,4 +66,9 @@ class ZohoOAuthPersistenceByCookie implements ZohoOAuthPersistenceInterface {
         }
     }
 
+    public function getGrantToken() {
+        throw new \Exception('Method has not implemented.');
+        exit();
+    }
+
 }

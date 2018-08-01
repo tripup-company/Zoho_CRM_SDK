@@ -1,100 +1,147 @@
 <?php
+
 namespace Zoho\Oauth\Client;
 
-use Zoho\Oauth\Common\ZohoOAuthException;
 use Zoho\Oauth\Common\OAuthLogger;
 
-class ZohoOAuthPersistenceHandler implements ZohoOAuthPersistenceInterface
-{
-    public function saveOAuthData($zohoOAuthTokens)
-    {
-        $db_link=null;
-        try {
-            self::deleteOAuthTokens($zohoOAuthTokens->getUserEmailId());
-            $db_link=self::getMysqlConnection();
-            $query="INSERT INTO oauthtokens(useridentifier,accesstoken,refreshtoken,expirytime) VALUES('".$zohoOAuthTokens->getUserEmailId()."','".$zohoOAuthTokens->getAccessToken()."','".$zohoOAuthTokens->getRefreshToken()."',".$zohoOAuthTokens->getExpiryTime().")";
-            
-            /*$query="INSERT INTO oauthtokens(useridentifier,accesstoken,refreshtoken,expirytime) VALUES(?,?,?,?)";
-            $stmt=$db_link->prepare($query);
-            //ssi represents data types of param values (String,String,Integer)
-            $stmt->bind_param("sssi",$zohoOAuthTokens->getUserEmailId(),$zohoOAuthTokens->getAccessToken(),$zohoOAuthTokens->getRefreshToken(),$zohoOAuthTokens->getExpiryTime());
-            $stmt->execute();*/
-            $result=mysqli_query($db_link, $query);
-            if (!$result) {
-                OAuthLogger::severe("OAuth token insertion failed: (" . $db_link->errno . ") " . $db_link->error);
-            }
-        } catch (Exception $ex) {
-            Logger:severe("Exception occured while inserting OAuthTokens into DB(file::ZohoOAuthPersistenceHandler)({$ex->getMessage()})\n{$ex}");
-        } finally {
-            if ($db_link!=null) {
-                $db_link->close();
-            }
+class ZohoOAuthPersistenceHandler implements ZohoOAuthPersistenceInterface {
+
+    protected $dataBaseHost;
+    protected $dataBaseName;
+    protected $dataBaseUserName;
+    protected $dataBaseUserPass;
+
+    /**
+     * @var ZohoOAuthParams $oAuthParams
+     */
+    protected $oAuthParams;
+
+    /**
+     * @type Zoho\Resources\DbConfigurations $databaseConfigs
+     */
+    public static $databaseConfigs;
+
+    /*
+     * @param ZohoOAuthParams $oAuthParams
+     */
+
+    public function __construct($oAuthParams) {
+        $this->oAuthParams = $oAuthParams;
+        $dbConfigs = ZohoOAuthPersistenceHandler::$databaseConfigs;
+
+        if (!empty($dbConfigs) && get_class($dbConfigs) === 'Zoho\Resources\DbConfigurations') {
+            $this->dataBaseHost = $dbConfigs->getDatabaseHost();
+            $this->dataBaseName = $dbConfigs->getDatabaseName();
+            $this->dataBaseUserName = $dbConfigs->getUserName();
+            $this->dataBaseUserPass = $dbConfigs->getUserPassword();
         }
     }
-    
-    public function getOAuthTokens($userEmailId)
-    {
-        $db_link=null;
-        $oAuthTokens=new ZohoOAuthTokens();
+
+    public function saveOAuthData($zohoOAuthTokens) {
         try {
-            $db_link=self::getMysqlConnection();
-            $query="SELECT * FROM oauthtokens where useridentifier='".$userEmailId."'";
-            $resultSet=mysqli_query($db_link, $query);
-            if (!$resultSet) {
-                OAuthLogger::severe("Getting result set failed: (" . $db_link->errno . ") " . $db_link->error);
-                throw new ZohoOAuthException("No Tokens exist for the given user-identifier,Please generate and try again.");
-            } else {
-                while ($row=mysqli_fetch_row($resultSet)) {
-                    $oAuthTokens->setExpiryTime($row[3]);
-                    $oAuthTokens->setRefreshToken($row[2]);
-                    $oAuthTokens->setAccessToken($row[1]);
-                    $oAuthTokens->setUserEmailId($row[0]);
-                    break;
-                }
+            $userID = $this->oAuthParams->getClientId();
+            $accessToken = $zohoOAuthTokens->getAccessToken();
+            $refreshToken = $zohoOAuthTokens->getRefreshToken();
+            $expiryTime = $zohoOAuthTokens->getExpiryTime();
+
+            $mySqlConnection = $this->getMysqlConnection();
+            $query = "UPDATE crm_oauth_tokens SET grant_token='NULL', access_token='$accessToken', refresh_token='$refreshToken', expiry_time='$expiryTime' WHERE user_id='$userID'";
+            $mySqlConnection->query($query);
+            
+            if (!$result) {
+                OAuthLogger::severe("OAuth token insertion failed: (" . $mySqlConnection->errorCode() . ") " . $mySqlConnection->errorInfo());
             }
-        } catch (Exception $ex) {
+        } catch (\PDOException $e) {
+            Logger:severe("Exception occured while inserting OAuthTokens into DB(file::ZohoOAuthPersistenceHandler)({$e->getMessage()})\n{$e}");
+        } finally {
+            unset($mySqlConnection);
+        }
+    }
+
+    public function getOAuthTokens($userEmailId = null) {
+        $oAuthTokens = null;
+        $userID = $this->oAuthParams->getClientId();
+
+        try {
+            $mySqlConnection = $this->getMysqlConnection();
+            $query = "SELECT * FROM crm_oauth_tokens where user_id='" . $userID . "'";
+            $result = $mySqlConnection->query($query)->fetch();
+            
+            if (!empty($result) && !empty($result['access_token'])) {
+                return [
+                    'accessToken' => $result['access_token'],
+                    'refreshToken' => $result['refresh_token'],
+                    'expiryTime' => $result['expiry_time'],
+                    'userEmailId' => $userEmailId
+                ];
+            }
+        } catch (\Exception $ex) {
             OAuthLogger::severe("Exception occured while getting OAuthTokens from DB(file::ZohoOAuthPersistenceHandler)({$ex->getMessage()})\n{$ex}");
         } finally {
-            if ($db_link!=null) {
-                $db_link->close();
-            }
+            unset($mySqlConnection);
         }
+
         return $oAuthTokens;
     }
-    
-    public function deleteOAuthTokens($userEmailId)
-    {
-        $db_link=null;
+
+    public function deleteOAuthTokens($userEmailId) {
+        exit();
+    }
+
+    public function getGrantToken() {
         try {
-            $db_link=self::getMysqlConnection();
-            $query="DELETE FROM oauthtokens where useridentifier='".$userEmailId."'";
-            $resultSet=mysqli_query($db_link, $query);
-            if (!$resultSet) {
-                OAuthLogger::severe("Deleting  oauthtokens failed: (" . $db_link->errno . ") " . $db_link->error);
+            $mySqlConnection = $this->getMysqlConnection();
+            $query = "SELECT * FROM crm_oauth_tokens WHERE user_id='" . $this->oAuthParams->getClientId() . "'";
+            $result = $mySqlConnection->query($query)->fetch();
+
+            if (empty($result)) {
+                $this->createNewClientRow();
+                $this->getGrantToken();
+            } else if (empty($result['grant_token'])){
+                throw new \Exception('Please, set grant token for your Client ID in MySQL. You can generate it here: https://accounts.zoho.eu/developerconsole');
+            } else {
+                return $result['grant_token'];
             }
-        } catch (Exception $ex) {
-            OAuthLogger::severe("Exception occured while Deleting OAuthTokens from DB(file::ZohoOAuthPersistenceHandler)({$ex->getMessage()})\n{$ex}");
+        } catch (\Exception $e) {
+            echo 'Notice [' . $e->getCode() . ']: ' . $e->getMessage();
+            exit();
+        } catch (\PDOException $e) {
+            OAuthLogger::severe("Exception occured while Deleting OAuthTokens from DB(file::ZohoOAuthPersistenceHandler)({$e->getMessage()})\n{$e}");
         } finally {
-            if ($db_link!=null) {
-                $db_link->close();
-            }
+            unset($mySqlConnection);
         }
     }
-    
-    public function getMysqlConnection()
-    {
-        $mysqli_con = new mysqli("localhost:3306", "root", "", "zohooauth");
-        if ($mysqli_con->connect_errno) {
-            OAuthLogger::severe("Failed to connect to MySQL: (" . $mysqli_con->connect_errno . ") " . $mysqli_con->connect_error);
-            echo "Failed to connect to MySQL: (" . $mysqli_con->connect_errno . ") " . $mysqli_con->connect_error;
+
+    protected function getMysqlConnection() {
+        try {
+            $mySqlConnection = new \PDO('mysql:host=' . $this->dataBaseHost . ';dbname=' . $this->dataBaseName, $this->dataBaseUserName, $this->dataBaseUserPass);
+            $creationTableQuery = "CREATE TABLE IF NOT EXISTS crm_oauth_tokens ("
+                    . "ID int(11) NOT NULL auto_increment,"
+                    . "user_id varchar(255) NOT NULL default '',"
+                    . "grant_token varchar(255) NULL,"
+                    . "access_token varchar(255) NULL,"
+                    . "refresh_token varchar(255) NULL,"
+                    . "expiry_time varchar(255) NULL,"
+                    . "PRIMARY KEY (ID))";
+            $mySqlConnection->query($creationTableQuery);
+            return $mySqlConnection;
+        } catch (\PDOException $e) {
+            OAuthLogger::severe("Failed to connect to MySQL: (" . $e->getCode() . ") " . $e->getMessage());
+            echo "Failed to connect to MySQL: (" . $e->getCode() . ") " . $e->getMessage();
         }
-        /*$db_link = mysql_connect('localhost:3307', 'root', '');
-        if (!$db_link) {
-            die('Could not connect: ' . mysql_error());
-        }
-        mysql_select_db('zohooauth', $db_link) or die('Could not select database.');
-        return $db_link;*/
-        
-        return $mysqli_con;
     }
+
+    protected function createNewClientRow() {
+        try {
+            $mySqlConnection = $this->getMysqlConnection();
+            $query = "INSERT INTO crm_oauth_tokens (user_id) VALUES('" . $this->oAuthParams->getClientId() . "')";
+            $mySqlConnection->query($query);
+        } catch (\PDOException $e) {
+            OAuthLogger::severe("Failed to insert a new client ID to MySQL: (" . $e->getCode() . ") " . $e->getMessage());
+            echo "Failed to insert a new client ID to MySQL: (" . $e->getCode() . ") " . $e->getMessage();
+        } finally {
+            unset($mySqlConnection);
+        }
+    }
+
 }

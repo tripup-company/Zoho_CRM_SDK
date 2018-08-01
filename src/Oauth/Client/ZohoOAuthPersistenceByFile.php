@@ -92,4 +92,10 @@ class ZohoOAuthPersistenceByFile implements ZohoOAuthPersistenceInterface
             throw $ex;
         }
     }
+
+    public function getGrantToken() {
+        throw new \Exception('Method has not implemented.');
+        exit();
+    }
+
 }

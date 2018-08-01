@@ -25,4 +25,9 @@ interface ZohoOAuthPersistenceInterface {
      */
     public function deleteOAuthTokens($userEmailId);
     
+    /**
+     * Get grant token
+     */
+    public function getGrantToken();
+    
 }

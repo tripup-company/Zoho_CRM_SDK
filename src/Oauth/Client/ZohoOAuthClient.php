@@ -16,18 +16,17 @@ use Zoho\Oauth\Client\ZohoOAuthPersistenceByCookie;
 class ZohoOAuthClient {
 
     /**
-     * @type ZohoOAuthClient
+     * @type ZohoOAuthClient $instance
      */
     protected static $instance;
-
+    
     /**
-     *
-     * @type 
+     * @type ZohoOAuth $oAuthUrls
      */
     protected $oAuthUrls;
 
     /**
-     * @type ZohoOAuthParams
+     * @type ZohoOAuthParams $oAuthParams
      */
     protected $oAuthParams;
 
@@ -82,7 +81,7 @@ class ZohoOAuthClient {
         if (empty($tokenPath)) {
             switch ($handlerClass) {
                 case 'ZohoOAuthPersistenceHandler' :
-                    $persistenceHandler = new ZohoOAuthPersistenceHandler();
+                    $persistenceHandler = new ZohoOAuthPersistenceHandler($this->oAuthParams);
                     break;
                 case 'ZohoOAuthPersistenceByCookie' :
                     $persistenceHandler = new ZohoOAuthPersistenceByCookie($this->oAuthParams->getClientSecret());
@@ -105,8 +104,12 @@ class ZohoOAuthClient {
             OAuthLogger::severe("Exception while retrieving tokens from persistence - " . $ex);
             throw new ZohoOAuthException($ex);
         }
-
+        
         try {
+            if (empty($tokensAsArray)) {
+                $tokensAsArray = $this->generateAccessToken();
+            }
+            
             $tokens = new ZohoOAuthTokens();
             $tokens->setAccessToken($tokensAsArray['accessToken']);
             $tokens->setRefreshToken($tokensAsArray['refreshToken']);
@@ -125,11 +128,9 @@ class ZohoOAuthClient {
         }
     }
 
-    public function generateAccessToken($grantToken) {
+    public function generateAccessToken() {
         try {
-            if (empty($grantToken)) {
-                throw new ZohoOAuthException("Grant Token is not provided.");
-            }
+            $grantToken = $this->persistenceHandler->getGrantToken();
 
             $conn = new ZohoOAuthHTTPConnector($this->oAuthParams);
             $conn->setUrl($this->oAuthUrls->getTokenUrl());
