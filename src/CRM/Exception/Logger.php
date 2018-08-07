@@ -14,7 +14,7 @@ class Logger
             throw new \Exception('Log file path is not set.');
         }
         
-        set_include_path($loggerFilePath);
+        set_include_path($logFilePath);
         $path = get_include_path();
         if ($path{strlen($path)-1} != '\/') {
             $path = $path . '/';

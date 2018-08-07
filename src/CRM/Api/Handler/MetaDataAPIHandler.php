@@ -14,6 +14,7 @@ use Zoho\CRM\Crud\ZCRMRelatedListProperties;
 use Zoho\CRM\Crud\ZCRMCustomView;
 use Zoho\CRM\Crud\ZCRMCustomViewCriteria;
 use Zoho\CRM\Exception\ZCRMException;
+use Zoho\CRM\Exception\APIExceptionHandler;
 
 class MetaDataAPIHandler extends APIHandler {
 

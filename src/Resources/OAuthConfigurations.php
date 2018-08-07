@@ -47,6 +47,11 @@ class OAuthConfigurations implements InterfaceOAuthConfigurations {
      * @var string $persistenceHandlerClass
      */
     protected $persistenceHandlerClass = 'ZohoOAuthPersistenceHandler';
+    
+    /**
+     * @var mixed $oAuthLogerPath
+     */
+    protected $oAuthLogerPath;
 
     /**
      * @param array $oathConfigurations

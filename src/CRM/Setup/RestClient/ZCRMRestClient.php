@@ -71,7 +71,7 @@ class ZCRMRestClient {
      */
     public function getAccessToken() {
         $currentUserEmail = $this->configs->getCurrentUserEmail();
-
+        
         if (empty($currentUserEmail)) {
             throw new ZCRMException("You need to set 'currentUserEmail' in Zoho\Resources\Configurations");
         }

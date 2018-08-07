@@ -3,6 +3,7 @@
 namespace Zoho\Oauth\Client;
 
 use Zoho\Oauth\Common\OAuthLogger;
+use Zoho\Oauth\Common\ZohoOAuthTokens;
 
 class ZohoOAuthPersistenceHandler implements ZohoOAuthPersistenceInterface {
 
@@ -45,9 +46,15 @@ class ZohoOAuthPersistenceHandler implements ZohoOAuthPersistenceInterface {
             $expiryTime = $zohoOAuthTokens->getExpiryTime();
 
             $mySqlConnection = $this->getMysqlConnection();
-            $query = "UPDATE crm_oauth_tokens SET grant_token='NULL', access_token='$accessToken', refresh_token='$refreshToken', expiry_time='$expiryTime' WHERE user_id='$userID'";
-            $mySqlConnection->query($query);
-            
+            $isRefreshTokenEmpty = empty($refreshToken) ? '' : "refresh_token='$refreshToken', ";
+
+            $query = "UPDATE crm_oauth_tokens "
+                    . "SET "
+                    . "grant_token='', "
+                    . "access_token='$accessToken', " . $isRefreshTokenEmpty . "expiry_time='$expiryTime' "
+                    . "WHERE user_id='$userID'";
+            $result = $mySqlConnection->query($query);
+
             if (!$result) {
                 OAuthLogger::severe("OAuth token insertion failed: (" . $mySqlConnection->errorCode() . ") " . $mySqlConnection->errorInfo());
             }
@@ -66,15 +73,14 @@ class ZohoOAuthPersistenceHandler implements ZohoOAuthPersistenceInterface {
             $mySqlConnection = $this->getMysqlConnection();
             $query = "SELECT * FROM crm_oauth_tokens where user_id='" . $userID . "'";
             $result = $mySqlConnection->query($query)->fetch();
+
+            $tokens = new ZohoOAuthTokens();
+            $tokens->setAccessToken($result['access_token']);
+            $tokens->setRefreshToken($result['refresh_token']);
+            $tokens->setExpiryTime($result['expiry_time']);
+            $tokens->setUserEmailId($userEmailId);
             
-            if (!empty($result) && !empty($result['access_token'])) {
-                return [
-                    'accessToken' => $result['access_token'],
-                    'refreshToken' => $result['refresh_token'],
-                    'expiryTime' => $result['expiry_time'],
-                    'userEmailId' => $userEmailId
-                ];
-            }
+            return $tokens;
         } catch (\Exception $ex) {
             OAuthLogger::severe("Exception occured while getting OAuthTokens from DB(file::ZohoOAuthPersistenceHandler)({$ex->getMessage()})\n{$ex}");
         } finally {
@@ -97,7 +103,7 @@ class ZohoOAuthPersistenceHandler implements ZohoOAuthPersistenceInterface {
             if (empty($result)) {
                 $this->createNewClientRow();
                 $this->getGrantToken();
-            } else if (empty($result['grant_token'])){
+            } else if (empty($result['grant_token'])) {
                 throw new \Exception('Please, set grant token for your Client ID in MySQL. You can generate it here: https://accounts.zoho.eu/developerconsole');
             } else {
                 return $result['grant_token'];
@@ -118,10 +124,10 @@ class ZohoOAuthPersistenceHandler implements ZohoOAuthPersistenceInterface {
             $creationTableQuery = "CREATE TABLE IF NOT EXISTS crm_oauth_tokens ("
                     . "ID int(11) NOT NULL auto_increment,"
                     . "user_id varchar(255) NOT NULL default '',"
-                    . "grant_token varchar(255) NULL,"
-                    . "access_token varchar(255) NULL,"
-                    . "refresh_token varchar(255) NULL,"
-                    . "expiry_time varchar(255) NULL,"
+                    . "grant_token varchar(255) NULL default '',"
+                    . "access_token varchar(255) NULL default '',"
+                    . "refresh_token varchar(255) NULL default '',"
+                    . "expiry_time varchar(255) NULL default '',"
                     . "PRIMARY KEY (ID))";
             $mySqlConnection->query($creationTableQuery);
             return $mySqlConnection;

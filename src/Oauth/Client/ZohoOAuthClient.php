@@ -96,7 +96,7 @@ class ZohoOAuthClient {
 
     public function getAccessToken($userEmailId = null) {
         try {
-            $tokensAsArray = $this->persistenceHandler->getOAuthTokens($userEmailId);
+            $tokens = $this->persistenceHandler->getOAuthTokens($userEmailId);
         } catch (ZohoOAuthException $ex) {
             OAuthLogger::severe("Exception while retrieving tokens from persistence - " . $ex);
             throw $ex;
@@ -104,19 +104,13 @@ class ZohoOAuthClient {
             OAuthLogger::severe("Exception while retrieving tokens from persistence - " . $ex);
             throw new ZohoOAuthException($ex);
         }
-        
+
         try {
-            if (empty($tokensAsArray)) {
-                $tokensAsArray = $this->generateAccessToken();
+            if (empty($tokens) || empty($tokens->getRefreshToken())) {
+                $tokens = $this->generateAccessToken();
             }
             
-            $tokens = new ZohoOAuthTokens();
-            $tokens->setAccessToken($tokensAsArray['accessToken']);
-            $tokens->setRefreshToken($tokensAsArray['refreshToken']);
-            $tokens->setExpiryTime($tokensAsArray['expiryTime']);
-            $tokens->setUserEmailId($tokensAsArray['userEmailId']);
-
-            if (!$tokens->isValidAccessToken()) {
+            if (!$tokens->isValidAccessToken() || $tokens->getRefreshToken() && (empty($tokens->getAccessToken()) || empty($tokens->getExpiryTime()))) {
                 $tokens = $this->generateAccessTokenFromRefreshToken($tokens->getRefreshToken());
             }
 
@@ -131,7 +125,11 @@ class ZohoOAuthClient {
     public function generateAccessToken() {
         try {
             $grantToken = $this->persistenceHandler->getGrantToken();
-
+            
+            if (empty($grantToken)) {
+                throw new ZohoOAuthException("Grant token is NULL. Regenerate it once more here: https://accounts.zoho.eu/developerconsole");
+            }
+            
             $conn = new ZohoOAuthHTTPConnector($this->oAuthParams);
             $conn->setUrl($this->oAuthUrls->getTokenUrl());
             $conn->addParam('grant_type', 'authorization_code');
